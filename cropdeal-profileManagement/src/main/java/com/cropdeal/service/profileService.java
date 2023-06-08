@@ -4,12 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.stereotype.Service;
 
+import com.cropdeal.entites.BankAccounts;
+import com.cropdeal.entites.address;
 import com.cropdeal.entites.profile;
+import com.cropdeal.exception.noProfileFoundException;
 import com.cropdeal.repositry.profileRepositry;
 
 
 public interface profileService {
 	
-	public void addprofile(profile profile);
-
+	public void addprofile(profile profile) throws noProfileFoundException;
+	
+	public profile getprofileById(int id) throws noProfileFoundException ;
+	public void updateBankAccount(int id,BankAccounts bAccounts) ;
+	public void updateaddress(int id,address address);
 }

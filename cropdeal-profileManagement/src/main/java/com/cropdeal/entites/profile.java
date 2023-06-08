@@ -4,102 +4,51 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIgnoreProperties({ "target", "source" })
 @Document
 public class profile {
 	
 	@Id
 	private int id;
 	
-	@Min(value = 4)
+	@Size(min  = 4)
 	private String name;
 	@Min(value = 21)
 	@Max(value = 70)
 	private int age;
-	@Min(value = 8)
+	@Size(min  = 8)
 	private String profilePic;
-	@DBRef
+	@DBRef(lazy = true)
 	private address address;
-	@Min(10)
-	@Max(10)
+	@Digits(integer = 10, fraction = 0)
 	private double mobileNumber;
+//	@NotEmpty
+	@Email
+	private String emailId;
+	@Size(min = 15, max = 200)
 	private String bio;
-	@DBRef
+	@DBRef(lazy = true)
 	private BankAccounts bankAccount;
-	
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public int getAge() {
-		return age;
-	}
-	public void setAge(int age) {
-		this.age = age;
-	}
-	public profile() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	
-	public String getProfilePic() {
-		return profilePic;
-	}
-	public void setProfilePic(String profilePic) {
-		this.profilePic = profilePic;
-	}
-	public address getAddress() {
-		return address;
-	}
-	public void setAddress(address address) {
-		this.address = address;
-	}
-	public String getBio() {
-		return bio;
-	}
-	public void setBio(String bio) {
-		this.bio = bio;
-	}
-	public BankAccounts getBankAccount() {
-		return bankAccount;
-	}
-	public void setBankAccount(BankAccounts bankAccount) {
-		this.bankAccount = bankAccount;
-	}
-	
-	public double getMobileNumber() {
-		return mobileNumber;
-	}
-	public void setMobileNumber(double mobileNumber) {
-		this.mobileNumber = mobileNumber;
-	}
-	public profile(int id, String name, int age, String profilePic, com.cropdeal.entites.address address,
-			double mobileNumber, String bio, BankAccounts bankAccount) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.age = age;
-		this.profilePic = profilePic;
-		this.address = address;
-		this.mobileNumber = mobileNumber;
-		this.bio = bio;
-		this.bankAccount = bankAccount;
-	}
-	
-	
-		
-		
-	
-
+	@NotEmpty
+	@Pattern(regexp = "(DEALER)|(FARMER)")
+	private String role;
 }
