@@ -32,6 +32,23 @@ public class bills {
 		@ManyToOne(optional = true)
 		private copons coupon;
 		private double discountAmount;
+		public bills(double totalAmount, double payableAmount, String paymentMode, 
+				double discountAmount) {
+			super();
+			this.totalAmount = totalAmount;
+			this.payableAmount = payableAmount;
+			this.paymentMode = paymentMode;
+			this.discountAmount = discountAmount;
+		}
+		public bills(double totalAmount, double payableAmount, String paymentMode, copons coupon,
+				double discountAmount) {
+			super();
+			this.totalAmount = totalAmount;
+			this.payableAmount = payableAmount;
+			this.paymentMode = paymentMode;
+			this.coupon = coupon;
+			this.discountAmount = discountAmount;
+		}
 		
 		
 }

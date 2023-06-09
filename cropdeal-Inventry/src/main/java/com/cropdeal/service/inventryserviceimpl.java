@@ -204,6 +204,60 @@ public class inventryserviceimpl implements inventryService {
 	return  reviewRepostry.findMaxReviewId().getReviewId()+1;
 	}
 
+	@Override
+	public String orderPlaced(Map<String, String> orderdetails) throws noProductFoundException {
+		
+//		productId
+//		quantity
+	    product products = productRepositry.findByProductId(orderdetails.get("productId")).get(0) ;
+		
+	    
+	    if(products.getAvailableQuantity() < Integer.parseInt(orderdetails.get("quantity"))){
+	    	throw new noProductFoundException("sorry for inconvinace but we have insffitiant ");
+	    }
+	    
+	    products.setAvailableQuantity(products.getAvailableQuantity()-Integer.parseInt(orderdetails.get("quantity")) );
+		
+	    productRepositry.save(products);
+		return "success";
+	}
+
+	@Override
+	public String cartOrderplaced(Map<String, String> orderdetails,int marchentId) throws noProductFoundException {
+
+		for (Map.Entry<String, String> entry : orderdetails.entrySet()) {
+//	    System.out.println("Product ID: " + entry.getKey() + ", Quantity: " + entry.getValue());
+			product products = productRepositry.findByProductId(entry.getKey()).get(0);
+			if (products.getAvailableQuantity() < Integer.parseInt(entry.getValue())) {
+				throw new noProductFoundException(
+						"sorry for inconvinace but we have insffitiant quantity to place your order refund will be insiated shortly");
+			}
+			products.setAvailableQuantity(products.getAvailableQuantity() - Integer.parseInt(entry.getValue()));
+			productRepositry.save(products);
+
+		}
+		removeAllFromCart(marchentId);
+
+		return "success";
+	}
+
+	@Override
+	public String orderCanceled(Map<String, String> orderdetails) throws noProductFoundException {
+		
+		for (Map.Entry<String, String> entry : orderdetails.entrySet()) {
+//		    System.out.println("Product ID: " + entry.getKey() + ", Quantity: " + entry.getValue());
+				product products = productRepositry.findByProductId(entry.getKey()).get(0);
+				products.setAvailableQuantity(products.getAvailableQuantity() + Integer.parseInt(entry.getValue()));
+				productRepositry.save(products);
+
+			}
+
+			return "success";
+		
+		
+		
+	}
+
 	
 	
 	

@@ -25,5 +25,8 @@ public interface inventryService {
 	public reviews addreview(String productId,reviews reviews, int dealerid) throws noProductFoundException;
 	public void removereview(String productid, int dealerid) throws noProductFoundException;
 	reviews updatereview(String productId, reviews reviews, int dealerid) throws noProductFoundException;
+	public String orderPlaced(Map<String, String> orderdetails) throws noProductFoundException;
+	public String cartOrderplaced(Map<String, String> orderdetails, int merchentId) throws noProductFoundException;
+	public String orderCanceled(Map<String, String> orderdetails) throws noProductFoundException;
 
 }

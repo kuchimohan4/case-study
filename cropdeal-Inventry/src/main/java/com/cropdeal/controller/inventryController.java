@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cropdeal.entites.cart;
@@ -85,9 +86,9 @@ public class inventryController {
 	}
 
 	@GetMapping("/getCartItemsByMarchent")
-	public List<cart> getCartItemsByMarchent() throws noProductFoundException {
+	public List<cart> getCartItemsByMarchent(@RequestParam("merchentId") int merchentId) throws noProductFoundException {
 		// hard coding former id later after adding sequrity make sure to get farmer id
-		int merchentId = 6;
+//		int merchentId = 6;
 
 		return inventryService.getCartitemsCartsBymarchent(merchentId);
 	}
@@ -126,5 +127,28 @@ public class inventryController {
 		inventryService.removeAllFromCart( merchentId);
 		return new ResponseEntity<HttpStatus>(HttpStatus.ACCEPTED);
 	}
+	
+	@PostMapping("/orderplaced")
+	public String orderPlaced(@RequestBody Map<String, String> orderdetails ) throws noProductFoundException {
+//		System.out.println("hello");
+		return inventryService.orderPlaced(orderdetails);
+		
+	}
+	
+	@PostMapping("/cartOrderplaced")
+	public String cartOrderplaced(@RequestBody Map<String, String> orderdetails ) throws noProductFoundException {
+//		System.out.println("hello");
+		int merchentId = 6;
+		return inventryService.cartOrderplaced(orderdetails,merchentId);
+		
+	}
+	
+	@DeleteMapping("/orderCanceled")
+	public String orderCanceled(@RequestBody Map<String, String> orderdetails ) throws noProductFoundException {
+//		System.out.println("hello");
+		return inventryService.orderCanceled(orderdetails);
+		
+	}
+	
 
 }
