@@ -3,11 +3,13 @@ package com.cropdeal.entites;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.data.annotation.Id;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,7 +26,9 @@ public class copons {
 	private String coupon;
 	private int couponDiscount;
 	private int maxLimit;
+	@Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime startDate;
+	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime enddate;
 	
 	
