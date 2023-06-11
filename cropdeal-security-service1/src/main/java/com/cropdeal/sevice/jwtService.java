@@ -2,10 +2,12 @@ package com.cropdeal.sevice;
 
 
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -32,22 +34,24 @@ public class jwtService {
 	
 	
 	
-	public String genarateToken(String username,String role) {
-		
+	public String genarateToken(int userId,Collection<? extends GrantedAuthority> authorities) {
+		GrantedAuthority authority = authorities.iterator().next();
+	    String role = authority.getAuthority();
 		Map<String, Object> claims=new HashMap<>();
 //		System.out.println("hello1"+null);
-		return createToken(claims,username,role);
+		return createToken(claims,userId,role);
 		
 	}
 	
 	
-	private String createToken(Map<String, Object> claims,String username,String role) {
+	private String createToken(Map<String, Object> claims,int userId,String role) {
 //		System.out.println("hello"+role);
 		claims.put("role", role);
 		
+//		System.out.println(role+" "+userId);
 		return Jwts.builder()
 				.setClaims(claims)
-				.setSubject(username)
+				.setSubject(""+userId)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis()+1000*60*60))
 				.signWith(getSignKey(),SignatureAlgorithm.HS256).compact();

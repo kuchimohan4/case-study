@@ -18,10 +18,16 @@ public class customUserDetailservice implements UserDetailsService {
 	private userCreantialsRepositry userCreantialsRepositry;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
-		Optional<userCredentials> credentials=userCreantialsRepositry.findByName(username);
-		return credentials.map(customUserDetails::new).orElseThrow( () -> new UsernameNotFoundException("no user found with username"+username));
-	}
+		Optional<userCredentials> credentials=userCreantialsRepositry.findByEmail(email);
+		return credentials.map(cred -> new customUserDetails(
+				cred.getEmail(),
+				cred.getPassword(),
+				cred.getRole(),
+				cred.getEnabled(),
+				cred.isAccountNonLocked()
+		)).orElseThrow(() -> new UsernameNotFoundException("No user found with email: " + email));
+		}
 
 }

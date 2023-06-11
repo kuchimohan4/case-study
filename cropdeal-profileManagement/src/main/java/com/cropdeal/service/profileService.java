@@ -10,12 +10,16 @@ import com.cropdeal.entites.profile;
 import com.cropdeal.exception.noProfileFoundException;
 import com.cropdeal.repositry.profileRepositry;
 
+import jakarta.validation.Valid;
+
 
 public interface profileService {
 	
-	public void addprofile(profile profile) throws noProfileFoundException;
+	public void addprofile(int userid, profile profile) throws noProfileFoundException;
 	
 	public profile getprofileById(int id) throws noProfileFoundException ;
-	public void updateBankAccount(int id,BankAccounts bAccounts) ;
-	public void updateaddress(int id,address address);
+	public void updateBankAccount(int id,BankAccounts bAccounts) throws noProfileFoundException ;
+	public void updateaddress(int id,address address) throws noProfileFoundException;
+
+	public void updateProfile(int userid, @Valid profile profile) throws noProfileFoundException;
 }

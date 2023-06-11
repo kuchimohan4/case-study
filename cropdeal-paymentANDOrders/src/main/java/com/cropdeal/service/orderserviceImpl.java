@@ -22,6 +22,7 @@ import com.cropdeal.exception.noProductFoundException;
 import com.cropdeal.models.cart;
 import com.cropdeal.models.product;
 import com.cropdeal.models.transactionDetails;
+import com.cropdeal.rabbitmq.rabbitmqEmitter;
 import com.cropdeal.repositry.billRepostry;
 import com.cropdeal.repositry.coponRepositry;
 import com.cropdeal.repositry.inventryServiceProxy;
@@ -42,6 +43,9 @@ public class orderserviceImpl implements orderService {
 	private inventryServiceProxy proxy;
 	@Autowired
 	private paymentService paymentService;
+	
+	@Autowired
+	private rabbitmqEmitter rabbitmqEmitter;
 	
 	@Autowired
 	private transactionRepostry transactionRepostry;
@@ -72,8 +76,6 @@ public class orderserviceImpl implements orderService {
 			 discount=coponfromdb.getMaxLimit()<coponfromdb.getCouponDiscount()*totalamount/100 ?  coponfromdb.getMaxLimit():coponfromdb.getCouponDiscount()*totalamount/100;
 			
 		}
-		System.out.println(totalamount);
-		System.out.println(discount);
 		
 		transactionDetails transactionDetail= paymentService.getPayment((totalamount-discount)*100);
 		
@@ -130,6 +132,19 @@ public class orderserviceImpl implements orderService {
 		
 		orderDb.setTransactions(transactions2);
 		orderDb.setStatus("success");
+		
+		
+		
+//		mailling
+		Map<String, String> emmitmap=new HashMap<>();
+		emmitmap.put("type", "needMail");
+		emmitmap.put("kind", "productOrdered");
+		emmitmap.put("userId", ""+orderDb.getMarchentId());
+		emmitmap.put("queue", "order");
+		emmitmap.put("orderId", ""+orderDb.getOrderId());
+		
+		
+		rabbitmqEmitter.emmitmsg(emmitmap);
 		
 		
 //		orderid
@@ -291,6 +306,22 @@ public class orderserviceImpl implements orderService {
 		orderDb.setStatus("success");
 		
 		
+		
+		
+//		mailling
+		Map<String, String> emmitmap=new HashMap<>();
+		emmitmap.put("type", "needMail");
+		emmitmap.put("kind", "cartOrderedPlaced");
+		emmitmap.put("userId", ""+orderDb.getMarchentId());
+		emmitmap.put("queue", "order");
+		emmitmap.put("orderId", ""+orderDb.getOrderId());
+		
+		
+		rabbitmqEmitter.emmitmsg(emmitmap);
+		
+		
+		
+		
 //		orderid
 //		razorpay_payment_id
 //		razorpay_order_id
@@ -320,9 +351,20 @@ public class orderserviceImpl implements orderService {
 			
 		}
 		proxy.orderCanceled(orderMap);
-		
 		orders.setStatus("canceled");
 		orderRepostry.save(orders);
+		
+		
+//		mailling
+		Map<String, String> emmitmap=new HashMap<>();
+		emmitmap.put("type", "needMail");
+		emmitmap.put("kind", "orderCanceled");
+		emmitmap.put("userId", ""+orders.getMarchentId());
+		emmitmap.put("queue", "order");
+		emmitmap.put("orderId", ""+orders.getOrderId());
+		
+		
+		rabbitmqEmitter.emmitmsg(emmitmap);
 		
 		return orders;
 	}

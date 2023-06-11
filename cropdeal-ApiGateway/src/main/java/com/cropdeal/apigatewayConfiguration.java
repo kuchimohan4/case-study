@@ -23,15 +23,17 @@ public class apigatewayConfiguration {
 						)
 				.route(p -> p.path("/auth/**")
 						.uri("lb://SECURITY-SERVICE"))
-				.route(p -> p.path("/currency-conversion-feign/**")
-						.uri("lb://currency-converter"))
-				.route(p -> p.path("/currency-conversion-new/**")
-						.filters(f -> f.rewritePath(
-								"/currency-conversion-new/(?<segment>.*)",
-								"/currency-conversion-feign/${segment}"))
-						.uri("lb://currency-converter"))
-				.route(p -> p.path("/currency-exchange/**")
-						.uri("lb://currency-exchange"))
+				.route(p -> p.path("/profile/**")
+						.uri("lb://PROFILE-MANAGEMENT-SERVICE"))
+				.route(p -> p.path("/inventry/**")
+//						.filters(f -> f.rewritePath(
+//								"/currency-conversion-new/(?<segment>.*)",
+//								"/currency-conversion-feign/${segment}"))
+						.uri("lb://CROPDEAL-INVENTRY-SERVICE"))
+				.route(p -> p.path("/review/**")
+						.uri("lb://CROPDEAL-INVENTRY-SERVICE"))
+				.route(p -> p.path("/order/**")
+						.uri("lb://CROPDEAL-PAYMENTORDER-SERVICE"))
 				.build();
 		
 	}

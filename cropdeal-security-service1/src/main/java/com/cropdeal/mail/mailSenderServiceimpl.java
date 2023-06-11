@@ -1,4 +1,4 @@
-package com.cropdeal.service;
+package com.cropdeal.mail;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -19,7 +19,33 @@ public class mailSenderServiceimpl implements mailsenderservice {
 	            + "If you have any questions or need further assistance, feel free to contact us.\n\n"
 	            + "Thank you for using our services!\n\n"
 	            + "Best regards,\n"
-	            + "Your Company Name";
+	            + "KUCHI's";
+
+	    sendEmail(toEmail, subject, body);
+	}
+	
+	
+	@Override
+	public void sendotpForregistration(String toEmail, String name,String otp) {
+		String subject = "Registration OTP";
+	    String body = "Dear " + name + ",\n\n"
+	            + "Thank you for registering with our application!\n"
+	            + "Please use the following OTP for verification: " + otp + "\n"
+	            + "This OTP is valid for the next 5 minutes.\n\n"
+	            + "Best regards,\n"
+	            + "KUCHI's";
+
+	    sendEmail(toEmail, subject, body);
+		
+	}
+	@Override
+	public void sendregistrationSuccessMail(String toEmail, String name) {
+	    String subject = "Registration Successful";
+	    String body = "Dear " + name + ",\n\n"
+	            + "Congratulations! Your registration is successful.\n"
+	            + "Thank you for joining our platform.\n\n"
+	            + "Best regards,\n"
+	            + "KUCHI's";
 
 	    sendEmail(toEmail, subject, body);
 	}
@@ -33,6 +59,8 @@ public class mailSenderServiceimpl implements mailsenderservice {
 	    javaMailSender.send(message);
 	    System.out.println("Mail sent successfully.");
 	}
+
+	
 		
 	
 	

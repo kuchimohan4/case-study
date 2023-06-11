@@ -2,6 +2,7 @@ package com.cropdeal.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import com.cropdeal.entites.cart;
 import com.cropdeal.entites.product;
 import com.cropdeal.entites.reviews;
 import com.cropdeal.exceptions.noProductFoundException;
+import com.cropdeal.rabbitmq.rabbitmqEmitter;
 import com.cropdeal.repositry.cartRepositry;
 import com.cropdeal.repositry.productRepositry;
 import com.cropdeal.repositry.reviewRepostry;
@@ -31,19 +33,37 @@ public class inventryserviceimpl implements inventryService {
 	@Autowired
 	private reviewRepostry reviewRepostry;
 	
-	public product addproduct(product product) throws noProductFoundException {
-		
+	@Autowired
+	private rabbitmqEmitter rabbitmqEmitter;
+	
+	public product addproduct(int formerId,product product) throws noProductFoundException {
+		product.setFarmerId(formerId);
 		List<product> prodtOptional=productRepositry.findByFarmerIdAndProductName(product.getFarmerId(), product.getProductName());
-		if(prodtOptional.size()==0) {
-			product.genrateProductId();
-			product.setInitialQuantity(product.getAvailableQuantity());
-			product.setReviews(new ArrayList<reviews>());
-			return productRepositry.save(product);
-		}
-		else {
+		if(!(prodtOptional.size()==0)) {
 			throw new noProductFoundException("a product already exists with name "+product.getProductName()+" try updating quantity of product instad");
 			
 		}
+		product.genrateProductId();
+		product.setInitialQuantity(product.getAvailableQuantity());
+		product.setReviews(new ArrayList<reviews>());
+		
+		
+//		mailling
+		Map<String, String> emmitmap=new HashMap<>();
+		emmitmap.put("type", "needMail");
+		emmitmap.put("kind", "addedProduct");
+		emmitmap.put("userId", ""+product.getFarmerId());
+		emmitmap.put("queue", "product");
+		emmitmap.put("productId", product.getProductId());
+		emmitmap.put("productName", product.getProductName());
+		emmitmap.put("availableQuantity", ""+product.getAvailableQuantity());
+		emmitmap.put("price", ""+product.getPrice());
+		emmitmap.put("productDetails", product.getProductDetails());
+		
+		rabbitmqEmitter.emmitmsg(emmitmap);
+		
+		
+		return productRepositry.save(product);
 		
 		
 	}
@@ -56,6 +76,21 @@ public class inventryserviceimpl implements inventryService {
 		}
 		else {
 			product product2=prodtOptional.get(0);
+			
+//			maill
+			Map<String, String> emmitmap=new HashMap<>();
+			emmitmap.put("type", "needMail");
+			emmitmap.put("kind", "updatedProduct");
+			emmitmap.put("userId", ""+product2.getFarmerId());
+			emmitmap.put("queue", "product");
+			emmitmap.put("productId", product2.getProductId());
+			emmitmap.put("productName", product.getProductName());
+			emmitmap.put("availableQuantity", ""+product.getAvailableQuantity());
+			emmitmap.put("price", ""+product.getPrice());
+			emmitmap.put("productDetails", product.getProductDetails());
+			
+			rabbitmqEmitter.emmitmsg(emmitmap);
+			
 			return productRepositry.save(new product(product2.getProductId(), product2.getFarmerId(), product.getProductName(), product.getAvailableQuantity(), product2.getInitialQuantity(), product.getDate(), product.getPrice(),product.getProductDetails() , product2.getStatus(), product.getProductImages(), product2.getReviews()));
 		}
 	}
@@ -68,6 +103,16 @@ public class inventryserviceimpl implements inventryService {
 			throw new noProductFoundException("no Such Product exists On ur Account");
 		}
 		else {
+//			maill
+			Map<String, String> emmitmap=new HashMap<>();
+			emmitmap.put("type", "needMail");
+			emmitmap.put("kind", "deleteproduct");
+			emmitmap.put("userId", ""+prodtOptional.get(0).getFarmerId());
+			emmitmap.put("queue", "product");
+			emmitmap.put("productName", prodtOptional.get(0).getProductName());
+			
+			
+			rabbitmqEmitter.emmitmsg(emmitmap);
 			productRepositry.deleteByProductId(id);
 			
 		}

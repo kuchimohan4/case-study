@@ -35,7 +35,7 @@ public class inventryController {
 	@PostMapping("/addproduct")
 	public ResponseEntity<?> addproduct(@Valid @RequestBody product product, BindingResult bindingResult)
 			throws noProductFoundException {
-
+		int formerId = 4;
 		if (bindingResult.hasErrors()) {
 			Map<String, String> errormap = new HashMap<>();
 			bindingResult.getFieldErrors().forEach(error -> errormap.put(error.getField(), error.getDefaultMessage()));
@@ -43,7 +43,7 @@ public class inventryController {
 			return new ResponseEntity<>(errormap, HttpStatus.BAD_REQUEST);
 		}
 
-		return new ResponseEntity<>(inventryService.addproduct(product), HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(inventryService.addproduct(formerId,product), HttpStatus.ACCEPTED);
 	}
 
 	@PutMapping("/updateproduct")
@@ -65,7 +65,7 @@ public class inventryController {
 
 		// hard coding former id later after adding sequrity make sure to get farmer id
 
-		int formerId = 3;
+		int formerId = 4;
 
 		inventryService.deleteproduct(id, formerId);
 		return new ResponseEntity<HttpStatus>(HttpStatus.ACCEPTED);

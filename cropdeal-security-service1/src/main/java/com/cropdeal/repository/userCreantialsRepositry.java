@@ -10,5 +10,6 @@ import com.cropdeal.entity.userCredentials;
 public interface userCreantialsRepositry extends JpaRepository<userCredentials, Integer> {
 
 	Optional<userCredentials> findByName(String username);
+	Optional<userCredentials> findByEmail(String email);
 
 }
