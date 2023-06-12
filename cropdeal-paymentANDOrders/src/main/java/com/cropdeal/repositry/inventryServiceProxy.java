@@ -24,11 +24,11 @@ public interface inventryServiceProxy {
 	@PostMapping("/inventry/orderplaced")
 	public String orderPlaced(@RequestBody Map<String, String> orderdetails ) throws noProductFoundException;
 	
-	@GetMapping("/inventry/getCartItemsByMarchent")
-	public List<cart> getCartItemsByMarchent(@RequestParam("merchentId") int merchentId) throws noProductFoundException;
+	@GetMapping("/inventry/getCartItemsByMarchentprox")
+	public List<cart> getCartItemsByMarchentprox(@RequestParam("merchentId") int merchentId) throws noProductFoundException;
 	
 	@PostMapping("/inventry/cartOrderplaced")
-	public String cartOrderplaced(@RequestBody Map<String, String> orderdetails ) throws noProductFoundException ;
+	public String cartOrderplaced(@RequestBody Map<String, String> orderdetails, int i ) throws noProductFoundException ;
 	
 	@DeleteMapping("/inventry/orderCanceled")
 	public String orderCanceled(@RequestBody Map<String, String> orderdetails ) throws noProductFoundException;

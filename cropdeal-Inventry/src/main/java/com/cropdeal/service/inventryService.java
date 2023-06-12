@@ -13,7 +13,7 @@ import jakarta.validation.Valid;
 public interface inventryService {
 	
 	public product addproduct(int formerId, product product)  throws noProductFoundException;
-	public Object updateproduct(@Valid product product) throws noProductFoundException;
+	public Object updateproduct(@Valid product product, int farmerId) throws noProductFoundException;
 	public void deleteproduct(String id, int formerId) throws noProductFoundException;
 	public cart addtocart(int merchentId, Map<String, String> inputdata) throws noProductFoundException;
 	public product getProductById(String productId) throws noProductFoundException;
