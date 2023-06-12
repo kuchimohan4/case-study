@@ -34,9 +34,8 @@ public class securityConfiguration {
 		return http.csrf().disable()
 				.addFilterBefore(new JwtValidationFilter(jwtUtilservice), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests()
-                .requestMatchers("/profile/addProfile","/profile/updateProfile","/profile/updateBankAccount","/profile/updateaddress").hasAnyRole("ADMIN","FARMER","DEALEAR")
-                .requestMatchers("/profile/profile/{id}").hasAnyRole("ADMIN")
-                .requestMatchers("/profile/swagger-ui/**").permitAll()
+                .requestMatchers("/order/placeOrder","/order/transactionconformation","/order/orderCartProducts","/order/cartPaymentConformation","/order/cancelorder/{orderId}").hasAnyRole("ADMIN","DEALEAR")
+                .requestMatchers("/order/swagger-ui/**").permitAll()
                 .anyRequest().permitAll()
                 .and()
                 .build();

@@ -196,7 +196,7 @@ public class orderserviceImpl implements orderService {
 		
 //		copon
 		
-		List<cart> cartlist=proxy.getCartItemsByMarchent(dealearid);
+		List<cart> cartlist=proxy.getCartItemsByMarchentprox(dealearid);
 		
 		double totalamount=0;
 		List<Integer>  farmeridlist=new ArrayList<>();
@@ -300,7 +300,7 @@ public class orderserviceImpl implements orderService {
 		
 		
 		
-		proxy.cartOrderplaced(orderMap);
+		proxy.cartOrderplaced(orderMap,transactions2.getDealearId());
 		
 		orderDb.setTransactions(transactions2);
 		orderDb.setStatus("success");

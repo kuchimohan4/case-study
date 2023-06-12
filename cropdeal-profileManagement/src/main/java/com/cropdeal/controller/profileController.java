@@ -43,7 +43,7 @@ public class profileController {
 	public ResponseEntity<?> addprofile(@Valid @RequestBody profile profile,BindingResult bindingResult) throws noProfileFoundException {
 		
 //		userid
-		int userid=101;
+		int userid=requestUserId();
 		if(bindingResult.hasErrors()) {
 			Map<String, String> errormap=new HashMap<>();
 			bindingResult.getFieldErrors().forEach(error -> errormap.put(error.getField(), error.getDefaultMessage()));
@@ -58,7 +58,7 @@ public class profileController {
 	
 	@PutMapping("/updateProfile")
 	public ResponseEntity<?> updateProfile(@Valid @RequestBody profile profile,BindingResult bindingResult) throws noProfileFoundException {
-		int userid=4;
+		int userid=requestUserId();
 		if(bindingResult.hasErrors()) {
 			Map<String, String> errormap=new HashMap<>();
 			bindingResult.getFieldErrors().forEach(error -> errormap.put(error.getField(), error.getDefaultMessage()));
@@ -67,32 +67,37 @@ public class profileController {
 		}
 		profileServic.updateProfile(userid, profile);
 		
-		return new ResponseEntity<>("profile added",HttpStatus.ACCEPTED);
+		return new ResponseEntity<>("profile updated",HttpStatus.ACCEPTED);
 		
 	}
-	
-	
 	@GetMapping("/profile/{id}")
 //	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public profile getprofileById(@PathVariable int id) throws noProfileFoundException {
 		
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String userId = authentication.getName();
-		System.out.println(userId);
+		
 		
 	return profileServic.getprofileById(id);	
 	}
 	
 	@PutMapping("/updateBankAccount")
 	public void updateBankAccount(@RequestBody BankAccounts bankAccount) throws noProfileFoundException {
-		int userid=4;
+		int userid=requestUserId();
 		profileServic.updateBankAccount(userid, bankAccount);
 	}
 	
 	@PutMapping("/updateaddress")
 	public void updateAddress(@RequestBody address address) throws noProfileFoundException {
-		int userid=4;
+		int userid=requestUserId();
 		profileServic.updateaddress(userid, address);
+	}
+	
+	
+	private int requestUserId() {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String userId = authentication.getName();
+		return Integer.parseInt(userId);
+		
 	}
 	
 	

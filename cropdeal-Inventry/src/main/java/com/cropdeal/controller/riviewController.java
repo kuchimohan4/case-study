@@ -3,6 +3,8 @@ package com.cropdeal.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +27,7 @@ public class riviewController {
 	@PostMapping("/addReview/{productId}")
 	public reviews addreview(@RequestBody reviews reviews,@PathVariable("productId") String productid) throws noProductFoundException {
 		
-		int dealerid=6;
+		int dealerid=requestUserId();
 		
 		return inventryService.addreview(productid, reviews,dealerid);
 	}
@@ -33,19 +35,27 @@ public class riviewController {
 	@DeleteMapping("/removeReview/{productId}")
 	public ResponseEntity<HttpStatus> removereview(@PathVariable String productid) throws noProductFoundException {
 		
-		int dealerid=6;
+		int dealerid=requestUserId();
 
 		inventryService.removereview(productid,dealerid);
 		return new ResponseEntity<HttpStatus>(HttpStatus.ACCEPTED);
 	}
 	
 	@PutMapping("/updatereview/{productId}")
-public reviews upadtereview(@RequestBody reviews reviews,@PathVariable String productid) throws noProductFoundException {
+	public reviews upadtereview(@RequestBody reviews reviews,@PathVariable String productid) throws noProductFoundException {
 		
-		int dealerid=6;
+		int dealerid=requestUserId();
 
 		
 		return  inventryService.updatereview(productid, reviews,dealerid);
+	}
+	
+	private int requestUserId() {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String userId = authentication.getName();
+		return Integer.parseInt(userId);
+		
 	}
 	
 }
