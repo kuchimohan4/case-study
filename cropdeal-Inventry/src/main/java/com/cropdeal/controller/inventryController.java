@@ -7,8 +7,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +35,7 @@ public class inventryController {
 	@PostMapping("/addproduct")
 	public ResponseEntity<?> addproduct(@Valid @RequestBody product product, BindingResult bindingResult)
 			throws noProductFoundException {
-		int formerId = requestUserId();
+		int formerId = 4;
 		if (bindingResult.hasErrors()) {
 			Map<String, String> errormap = new HashMap<>();
 			bindingResult.getFieldErrors().forEach(error -> errormap.put(error.getField(), error.getDefaultMessage()));
@@ -58,9 +56,8 @@ public class inventryController {
 
 			return new ResponseEntity<>(errormap, HttpStatus.BAD_REQUEST);
 		}
-		int farmerId=requestUserId();
 
-		return new ResponseEntity<>(inventryService.updateproduct(product,farmerId), HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(inventryService.updateproduct(product), HttpStatus.ACCEPTED);
 	}
 
 	@DeleteMapping("/deleteProductByid/{id}")
@@ -68,7 +65,7 @@ public class inventryController {
 
 		// hard coding former id later after adding sequrity make sure to get farmer id
 
-		int formerId = requestUserId();
+		int formerId = 4;
 
 		inventryService.deleteproduct(id, formerId);
 		return new ResponseEntity<HttpStatus>(HttpStatus.ACCEPTED);
@@ -77,7 +74,7 @@ public class inventryController {
 	@PostMapping("/addtocart")
 	public cart addCart(@RequestBody Map<String, String> inputdata) throws noProductFoundException {
 		// hard coding former id later after adding sequrity make sure to get farmer id
-		int merchentId = requestUserId();
+		int merchentId = 6;
 
 		return inventryService.addtocart(merchentId, inputdata);
 	}
@@ -89,15 +86,7 @@ public class inventryController {
 	}
 
 	@GetMapping("/getCartItemsByMarchent")
-	public List<cart> getCartItemsByMarchent() throws noProductFoundException {
-		// hard coding former id later after adding sequrity make sure to get farmer id
-		int merchentId = requestUserId();
-
-		return inventryService.getCartitemsCartsBymarchent(merchentId);
-	}
-	
-	@GetMapping("/getCartItemsByMarchentprox")
-	public List<cart> getCartItemsByMarchentprox(@RequestParam("merchentId") int merchentId) throws noProductFoundException {
+	public List<cart> getCartItemsByMarchent(@RequestParam("merchentId") int merchentId) throws noProductFoundException {
 		// hard coding former id later after adding sequrity make sure to get farmer id
 //		int merchentId = 6;
 
@@ -114,7 +103,7 @@ public class inventryController {
 	public List<product> getallProductsOfFarmer() {
 		// hard coding former id later after adding sequrity make sure to get farmer id
 
-		int formerId = requestUserId();
+		int formerId = 3;
 		return inventryService.getallProductsByFarmerId(formerId);
 
 	}
@@ -123,7 +112,7 @@ public class inventryController {
 	
 		//hard coding former id later after adding sequrity make sure to get farmer id 
 		
-		int merchentId = requestUserId();
+		int merchentId = 6;
 		
 		inventryService.removefromCart(productId, merchentId);
 		return new ResponseEntity<HttpStatus>(HttpStatus.ACCEPTED);
@@ -147,8 +136,9 @@ public class inventryController {
 	}
 	
 	@PostMapping("/cartOrderplaced")
-	public String cartOrderplaced(@RequestBody Map<String, String> orderdetails,int merchentId ) throws noProductFoundException {
+	public String cartOrderplaced(@RequestBody Map<String, String> orderdetails ) throws noProductFoundException {
 //		System.out.println("hello");
+		int merchentId = 6;
 		return inventryService.cartOrderplaced(orderdetails,merchentId);
 		
 	}
@@ -157,14 +147,6 @@ public class inventryController {
 	public String orderCanceled(@RequestBody Map<String, String> orderdetails ) throws noProductFoundException {
 //		System.out.println("hello");
 		return inventryService.orderCanceled(orderdetails);
-		
-	}
-	
-	private int requestUserId() {
-		
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String userId = authentication.getName();
-		return Integer.parseInt(userId);
 		
 	}
 	

@@ -24,25 +24,22 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 	
 	private Claims claims;
 	
-	
+	@Autowired
 	private jwtUtilservice jwtServiceutil;
 	
-	public JwtValidationFilter(jwtUtilservice jwtUtilservice) {
-		this.jwtServiceutil=jwtUtilservice;
-	}
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-
+		
 		String jwtToken = extractJwtToken(request);
 		if (jwtToken != null) {
-
+			
 			if (jwtTokenIsValid(jwtToken)) {
-//				System.out.println("hello");
+				
 //				request.setAttribute("userName", username);
 				
-//				System.out.println(claims.getSubject()+" "+claims.get("role"));
+				System.out.println(claims.getSubject()+" "+claims.get("role"));
 				
 				String userid=claims.getSubject();
 				String role=claims.get("role").toString();
@@ -53,12 +50,28 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 		    }
 			else {
 				
-				filterChain.doFilter(request, response);
+				String newuri = "/booking/unauthorized";
+				HttpServletRequest wRequest = new HttpServletRequestWrapper(request) {
+					@Override
+					public String getMethod() {
+						return "GET";
+					}
+				};
+				
+				request.getRequestDispatcher(newuri).forward(wRequest, response);
 			}
 		}
 		else {
 
-			filterChain.doFilter(request, response);
+			String newuri = "/booking/missingAuth";
+			HttpServletRequest wRequest = new HttpServletRequestWrapper(request) {
+				@Override
+				public String getMethod() {
+					return "GET";
+				}
+			};
+			
+			request.getRequestDispatcher(newuri).forward(wRequest, response);
 			
 		}
 		
@@ -77,7 +90,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 	 
 	private boolean jwtTokenIsValid(String jwtToken) {
 		try {
-//			System.out.println(jwtToken);
+			
 	       this.claims= jwtServiceutil.validateToken(jwtToken);
 //	        System.out.println(jwtToken);
 	        return true;

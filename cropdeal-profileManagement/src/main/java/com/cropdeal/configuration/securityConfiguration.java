@@ -7,24 +7,18 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import com.cropdeal.filter.JwtValidationFilter;
-import com.cropdeal.util.jwtUtilservice;
 
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
-@EnableWebSecurity
 public class securityConfiguration {
-	
-	
-	private final jwtUtilservice jwtUtilservice = new jwtUtilservice();
 	
 	
 	@SuppressWarnings("removal")
@@ -32,14 +26,11 @@ public class securityConfiguration {
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 		
 		return http.csrf().disable()
-				.addFilterBefore(new JwtValidationFilter(jwtUtilservice), UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(new JwtValidationFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests()
-                .requestMatchers("/profile/addProfile","/profile/updateProfile","/profile/updateBankAccount","/profile/updateaddress").hasAnyRole("ADMIN","FARMER","DEALEAR")
-                .requestMatchers("/profile/profile/{id}").hasAnyRole("ADMIN")
-                .requestMatchers("/profile/swagger-ui/**").permitAll()
+                .requestMatchers("/profile/{id}").hasRole("ADMIN")
                 .anyRequest().permitAll()
-                .and()
-                .build();
+                .and().build();
 	}
 	
 	

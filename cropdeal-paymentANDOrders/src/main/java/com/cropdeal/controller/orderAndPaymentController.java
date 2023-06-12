@@ -3,8 +3,6 @@ package com.cropdeal.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +31,7 @@ public class orderAndPaymentController {
 //		productId
 //		quantity
 //		copon
-		int dealearid=requestUserId();
+		int dealearid=6;
 		
 	    return	orderService.placeOrder(dealearid,inputMap);
 		
@@ -54,7 +52,7 @@ public class orderAndPaymentController {
 	@PostMapping("/orderCartProducts")
 	public transactionDetails orderCartProducts(@RequestBody Map<String, String> inputMap) throws noProductFoundException, invalidQuantityException, RazorpayException {
 //		copon
-		int dealearid=requestUserId();
+		int dealearid=6;
 		
 	    return	orderService.orderCartProducts(dealearid,inputMap);
 		
@@ -75,18 +73,12 @@ public class orderAndPaymentController {
 	
 	@DeleteMapping("/cancelorder/{orderId}")
 	public orders cancelorder(@PathVariable int orderId) throws noProductFoundException {
-		int dealearid=requestUserId();
+		int dealearid=6;
 		return orderService.cancelorder(orderId,dealearid);
 		
 	}
 	
-	private int requestUserId() {
-		
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String userId = authentication.getName();
-		return Integer.parseInt(userId);
-		
-	}
+	
 	
 	
 	

@@ -69,8 +69,8 @@ public class inventryserviceimpl implements inventryService {
 	}
 
 	@Override
-	public Object updateproduct(product product,int farmerId) throws noProductFoundException {
-		List<product> prodtOptional=productRepositry.findByFarmerIdAndProductId(farmerId, product.getProductId());
+	public Object updateproduct(product product) throws noProductFoundException {
+		List<product> prodtOptional=productRepositry.findByFarmerIdAndProductId(product.getFarmerId(), product.getProductId());
 		if(prodtOptional.size()==0) {
 			throw new noProductFoundException("no product with name"+product.getProductName());
 		}
