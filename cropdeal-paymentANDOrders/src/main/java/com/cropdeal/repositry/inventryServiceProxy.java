@@ -28,7 +28,7 @@ public interface inventryServiceProxy {
 	public List<cart> getCartItemsByMarchentprox(@RequestParam("merchentId") int merchentId) throws noProductFoundException;
 	
 	@PostMapping("/inventry/cartOrderplaced")
-	public String cartOrderplaced(@RequestBody Map<String, String> orderdetails, int i ) throws noProductFoundException ;
+	public String cartOrderplaced(@RequestBody Map<String, String> orderdetails ) throws noProductFoundException ;
 	
 	@DeleteMapping("/inventry/orderCanceled")
 	public String orderCanceled(@RequestBody Map<String, String> orderdetails ) throws noProductFoundException;

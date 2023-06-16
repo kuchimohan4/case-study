@@ -94,7 +94,7 @@ public class AuthService {
 		mailmap.put("type", "ValidatedMail");
 		
 		rabbitmqEmitter.emmitmsg(mailmap);
-		otpMangerRepositry.deleteByGenratedFor(mail);
+//		otpMangerRepositry.deleteByGenratedFor(mail);
 		
 		return "user added sucessfully";
 		

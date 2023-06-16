@@ -177,12 +177,10 @@ public class orderserviceImpl implements orderService {
 //			double discount=coponfromdb.getMaxLimit()<coponfromdb.getCouponDiscount()*transaction.getAmount()/100 ?  coponfromdb.getMaxLimit():coponfromdb.getCouponDiscount()*transaction.getAmount()/100;
 			bills=new bills(totalamount,transaction.getAmount(),"Razopay",coponfromdb,totalamount-transaction.getAmount());
 		}
-		System.out.println("hello");
+		
 		billRepostry.save(bills);
 		orders.setBill(bills);
-		System.out.println("heloo");
 		
-		System.out.println();
 		return orderRepostry.save(orders);
 	}
 
@@ -300,7 +298,7 @@ public class orderserviceImpl implements orderService {
 		
 		
 		
-		proxy.cartOrderplaced(orderMap,transactions2.getDealearId());
+		proxy.cartOrderplaced(orderMap);
 		
 		orderDb.setTransactions(transactions2);
 		orderDb.setStatus("success");
