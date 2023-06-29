@@ -2,6 +2,7 @@ package com.cropdeal.service;
 
 import java.util.Map;
 
+import com.cropdeal.entites.copons;
 import com.cropdeal.entites.orders;
 import com.cropdeal.exception.invalidQuantityException;
 import com.cropdeal.exception.noProductFoundException;
@@ -19,5 +20,9 @@ public interface orderService {
 	orders cartPaymentConformation(Map<String, String> paymentdetails) throws noProductFoundException;
 
 	orders cancelorder(int orderId, int dealearid) throws noProductFoundException;
+
+	copons getCouponByName(String couponCode) throws noProductFoundException;
+
+	orders getOrderByOrderId(int orderId, int dealerid) throws noProductFoundException;
 
 }

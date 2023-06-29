@@ -11,7 +11,7 @@ import java.util.List;
 
 
 @Repository
-public interface cartRepositry extends MongoRepository<cart, Integer>{
+public interface cartRepositry extends MongoRepository<cart, String>{
 	
 	Optional<cart>  findByProductProductIdAndMarchentId(String productProductId, int marchentId);
 	List<cart> findByMarchentId(int marchentId);

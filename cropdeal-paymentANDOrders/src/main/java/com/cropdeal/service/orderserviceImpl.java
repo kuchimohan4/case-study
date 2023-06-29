@@ -296,8 +296,10 @@ public class orderserviceImpl implements orderService {
 			
 		}
 		
+		orderMap.put("marchentId", orderDb.getMarchentId()+"");
 		
 		
+//		System.out.println(orderMap);
 		proxy.cartOrderplaced(orderMap);
 		
 		orderDb.setTransactions(transactions2);
@@ -365,6 +367,23 @@ public class orderserviceImpl implements orderService {
 		rabbitmqEmitter.emmitmsg(emmitmap);
 		
 		return orders;
+	}
+
+	@Override
+	public copons getCouponByName(String couponCode) throws noProductFoundException {
+		// TODO Auto-generated method stub
+		return coponRepositry.findByCoupon(couponCode).orElseThrow(()-> new noProductFoundException("Invalid coupon code"));
+	}
+
+
+
+
+
+	@Override
+	public orders getOrderByOrderId(int orderId, int dealerid) throws noProductFoundException {
+		// TODO Auto-generated method stub
+		
+		return orderRepostry.findByMarchentIdAndOrderIdAndStatus(dealerid, orderId, "success").orElseThrow(()->new noProductFoundException("no order with orde Id"+orderId));
 	}
 	
 	

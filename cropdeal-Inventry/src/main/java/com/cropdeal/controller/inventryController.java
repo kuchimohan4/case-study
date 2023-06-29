@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,7 +47,7 @@ public class inventryController {
 			return new ResponseEntity<>(errormap, HttpStatus.BAD_REQUEST);
 		}
 
-		return new ResponseEntity<>(inventryService.addproduct(formerId,product), HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(inventryService.addproduct(formerId,product), HttpStatus.OK);
 	}
 
 	@PutMapping("/updateproduct")
@@ -60,7 +62,7 @@ public class inventryController {
 		}
 		int farmerId=requestUserId();
 
-		return new ResponseEntity<>(inventryService.updateproduct(product,farmerId), HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(inventryService.updateproduct(product,farmerId), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/deleteProductByid/{id}")
@@ -81,6 +83,17 @@ public class inventryController {
 
 		return inventryService.addtocart(merchentId, inputdata);
 	}
+	
+	@PutMapping("/reduceFromCart")
+	public cart reduceProductsFromcart(@RequestBody Map<String, String> inputdata) throws noProductFoundException {
+		
+		int merchentId = requestUserId();
+
+		return inventryService.reduceProductsFromcart(merchentId, inputdata);
+		
+	}
+	
+	
 
 	@GetMapping("/getProductById/{id}")
 	public product getProductById(@PathVariable String id) throws noProductFoundException {
@@ -110,12 +123,12 @@ public class inventryController {
 		return inventryService.getallProducts();
 	}
 
-	@GetMapping("/getAllProductOfFarmer")
-	public List<product> getallProductsOfFarmer() {
+	@GetMapping("/getAllProductOfFarmer/{id}")
+	public List<product> getallProductsOfFarmer(@PathVariable int id) {
 		// hard coding former id later after adding sequrity make sure to get farmer id
 
-		int formerId = requestUserId();
-		return inventryService.getallProductsByFarmerId(formerId);
+//		int formerId = requestUserId();
+		return inventryService.getallProductsByFarmerId(id);
 
 	}
 	@DeleteMapping("/removeFromCart/{productId}")
@@ -147,8 +160,10 @@ public class inventryController {
 	}
 	
 	@PostMapping("/cartOrderplaced")
-	public String cartOrderplaced(@RequestBody Map<String, String> orderdetails,int merchentId ) throws noProductFoundException {
+	public String cartOrderplaced(@RequestBody Map<String, String> orderdetails ) throws noProductFoundException {
 //		System.out.println("hello");
+		int merchentId=Integer.parseInt(orderdetails.get("marchentId"));
+		orderdetails.remove("marchentId");
 		return inventryService.cartOrderplaced(orderdetails,merchentId);
 		
 	}
@@ -166,6 +181,13 @@ public class inventryController {
 		String userId = authentication.getName();
 		return Integer.parseInt(userId);
 		
+	}
+	
+	
+	@ExceptionHandler()
+	public ResponseEntity<String> handleemailalredyexist(Exception ex){
+		
+		return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 	
 

@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.validation.constraints.DecimalMin;
@@ -41,6 +42,7 @@ public class product {
 	    @Positive
 	    private int availableQuantity;
 	    
+	    @JsonIgnore
 //	    @Positive
 	    private int initialQuantity;
 	    
@@ -53,11 +55,12 @@ public class product {
 	    @NotBlank
 	    private String productDetails;
 	    
-	    @NotBlank
+//	    @NotBlank
 	    private String status;
 	    
 	    private List<String> productImages;
 	    
+	    @JsonIgnore
 	    @DBRef(lazy = true)
 	    private List<reviews> reviews;
 	

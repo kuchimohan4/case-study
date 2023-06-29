@@ -129,13 +129,37 @@ public class inventryserviceimpl implements inventryService {
 		
 		Optional<cart> cartitem=cartRepositry.findByProductProductIdAndMarchentId(inputdata.get("productId"),merchentId);
 		if (cartitem.isPresent()) {
-			throw  new noProductFoundException("product already exists in your cart");
+//			throw  new noProductFoundException("product already exists in your cart");
+			System.out.println("cart't presrt");
+			if(Integer.parseInt( inputdata.get("quantity"))+cartitem.get().getQuantity()>product.getAvailableQuantity()) {
+				throw  new noProductFoundException("insuffitiant quantity please enter quantity less than "+product.getAvailableQuantity());
+			}
+			cart cartitemdbCart=cartitem.get();
+			cartitemdbCart.setQuantity(Integer.parseInt( inputdata.get("quantity"))+cartitem.get().getQuantity());
+			return cartRepositry.save(cartitemdbCart);
 		}
 		if(Integer.parseInt( inputdata.get("quantity"))>product.getAvailableQuantity()) {
 			throw  new noProductFoundException("insuffitiant quantity please enter quantity less than "+product.getAvailableQuantity());
 		}
-		
+		System.out.println("cart presrt");
 		return cartRepositry.save(new cart( Integer.parseInt( inputdata.get("quantity")), merchentId, "incart", LocalDateTime.now(), product));
+	}
+	
+	@Override
+	public cart reduceProductsFromcart(int merchentId, Map<String, String> inputdata) throws noProductFoundException {
+		product product=getProductById(inputdata.get("productId"));
+		Optional<cart> cartitem=cartRepositry.findByProductProductIdAndMarchentId(inputdata.get("productId"),merchentId);
+		if (cartitem.isPresent()) {
+			if(cartitem.get().getQuantity()-Integer.parseInt( inputdata.get("quantity"))<0) {
+				throw  new noProductFoundException("u dont have enpogh of this products to remove"+product.getAvailableQuantity());
+			}
+			cart cartitemdbCart=cartitem.get();
+			cartitemdbCart.setQuantity(cartitem.get().getQuantity()-Integer.parseInt( inputdata.get("quantity")));
+			return cartRepositry.save(cartitemdbCart);
+		}else {
+			throw new noProductFoundException("u dont have  this product in ur cart");
+		}
+		
 	}
 
 	@Override
@@ -199,14 +223,16 @@ public class inventryserviceimpl implements inventryService {
 	     }
 	     
 		product product=getProductById(productId);
-		reviews reviews2=new reviews(gentratereviewid() ,productId,dealerid,reviews.getRating(),reviews.getDescription(),LocalDateTime.now());
+		reviews reviews2=new reviews(gentratereviewid() ,productId,product.getFarmerId(),dealerid,reviews.getRating(),reviews.getDescription(),LocalDateTime.now());
 		List<reviews> productReviews= product.getReviews();
 		productReviews.add(reviews2);
 		product.setReviews(productReviews);
 		productRepositry.save(product);
+		
 		return reviewRepostry.save(reviews2);
 		
 	}
+	
 	
 	
 	
@@ -245,8 +271,8 @@ public class inventryserviceimpl implements inventryService {
 	
 	
 	public int gentratereviewid() {
-	System.out.println(reviewRepostry.findMaxReviewId().getReviewId());
-	return  reviewRepostry.findMaxReviewId().getReviewId()+1;
+		
+		return  reviewRepostry.findReviewWithMaxReviewId().getReviewId()+1;
 	}
 
 	@Override
@@ -302,6 +328,30 @@ public class inventryserviceimpl implements inventryService {
 		
 		
 	}
+
+	@Override
+	public Double getavgreviewofshop(int id) {
+		Double avgRating = reviewRepostry.getAverageRatingByFarmerId(id);
+	    if (avgRating == null) {
+	    	return 0.0;
+	       
+	    }
+		return avgRating;
+		
+	}
+	
+	@Override
+	public double getavgRatingOfProduct(String productId) {
+		 Double avgRating = reviewRepostry.getAverageRatingByProductId(productId);
+		    if (avgRating == null) {
+		    	return 0.0;
+		       
+		    }
+		    return avgRating;
+	}
+	
+	
+	
 
 	
 	

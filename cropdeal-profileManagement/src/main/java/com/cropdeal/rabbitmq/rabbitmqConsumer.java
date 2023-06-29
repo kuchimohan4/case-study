@@ -2,6 +2,8 @@ package com.cropdeal.rabbitmq;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import com.cropdeal.service.profileService;
 @Service
 public class rabbitmqConsumer {
 	
+	private static Logger logger=LoggerFactory.getLogger(rabbitmqConsumer.class);
+	
 	@Autowired
 	private mailsenderservice mailsenderservice;
 	
@@ -26,7 +30,7 @@ public class rabbitmqConsumer {
 
 	@RabbitListener(queues = "profile")
 	public void getRabbitmqMsg(Map<String, String> consumemap) throws NumberFormatException, noProfileFoundException {
-		
+		try {
 		System.out.println(consumemap.entrySet());
 		if(consumemap.get("type").equals("addedProfile")) {
 		mailsenderservice.sendProfileAddedMail(consumemap.get("email"),consumemap.get("name"));
@@ -45,6 +49,9 @@ public class rabbitmqConsumer {
 			consumemap.put("email", profile.getEmailId());
 			consumemap.put("name", profile.getName());
 			rabbitmqEmitter.emmitmsgtoother(consumemap);
+		}
+		}catch (Exception e) {
+			logger.error("failed to send mail because no profile found this user");
 		}
 		
 	}

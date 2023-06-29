@@ -28,5 +28,8 @@ public interface inventryService {
 	public String orderPlaced(Map<String, String> orderdetails) throws noProductFoundException;
 	public String cartOrderplaced(Map<String, String> orderdetails, int merchentId) throws noProductFoundException;
 	public String orderCanceled(Map<String, String> orderdetails) throws noProductFoundException;
+	public Double getavgreviewofshop(int id);
+	double getavgRatingOfProduct(String productId);
+	cart reduceProductsFromcart(int merchentId, Map<String, String> inputdata) throws noProductFoundException;
 
 }

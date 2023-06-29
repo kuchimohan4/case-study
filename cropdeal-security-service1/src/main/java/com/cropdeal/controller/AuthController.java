@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin("http://localhost:4200")
 public class AuthController {
 	
 	@Autowired
@@ -46,27 +48,38 @@ public class AuthController {
 
 			return new ResponseEntity<>(errormap, HttpStatus.BAD_REQUEST);
 		}
-	
-		return new ResponseEntity<>( authService.saveUser(userCredentials),HttpStatus.ACCEPTED);
+		Map<String, String> resmap = new HashMap<>();
+		authService.saveUser(userCredentials);
+		resmap.put("msg", "otp sent u");
+		return new ResponseEntity<>(resmap ,HttpStatus.OK);
 		
 	}
 	
 	
 	@PostMapping("/validateMail")
-	public String validateMail(@RequestBody Map<String, String> otp) throws InvalidOtpException {
+	public ResponseEntity<?> validateMail(@RequestBody Map<String, String> otp) throws InvalidOtpException {
 		
-		return authService.validateMail(otp);
+		
+		Map<String, String> resmap = new HashMap<>();
+		resmap.put("msg", authService.validateMail(otp));
+		
+		return new ResponseEntity<>(resmap ,HttpStatus.OK);
+
 	}
 	
 	
 	@PostMapping("/token")
-	public String genToken(@RequestBody userCredentials userCredentials) {
+	public Map<String, String> genToken(@RequestBody userCredentials userCredentials) {
 		Authentication authentication= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userCredentials.getEmail(), userCredentials.getPassword()));
-		System.out.println("hello");
 		if(authentication.isAuthenticated()) {
-			
 			int userId=authService.retreveId(userCredentials.getEmail());
-		return authService.genarateToken(userId,authentication.getAuthorities());
+			Map<String, String> authmap=new HashMap<>();
+			authmap.put("JwtToken", authService.genarateToken(userId,authentication.getAuthorities()) );
+			authmap.put("role", authentication.getAuthorities().iterator().next().getAuthority());
+			authmap.put("id", ""+userId);
+			authmap.put("expirationTime", ""+60*60);
+			
+		return authmap;
 		}else {
 			throw new RuntimeException("invalid user");
 		}

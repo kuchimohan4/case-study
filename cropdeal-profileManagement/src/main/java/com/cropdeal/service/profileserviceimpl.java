@@ -50,8 +50,12 @@ public class profileserviceimpl implements profileService {
 			
 		}
 		profile.setId(userid);
-		addressRepositry.save(profile.getAddress());
-		bankAccountRepostry.save(profile.getBankAccount());
+		address address=profile.getAddress();
+		address.setId(userid);
+		addressRepositry.save(address);
+		BankAccounts bankAccounts=profile.getBankAccount();
+		bankAccounts.setId(userid);
+		bankAccountRepostry.save(bankAccounts);
 		profileRepositry.save(profile);
 		
 		Map<String, String> emmitmap=new HashMap<>();
@@ -77,8 +81,8 @@ public class profileserviceimpl implements profileService {
 			
 		}
 		profile.setId(userid);
-		addressRepositry.save(profile.getAddress());
-		bankAccountRepostry.save(profile.getBankAccount());
+		profile.setAddress(prOptional.get().getAddress());
+		profile.setBankAccount(prOptional.get().getBankAccount());
 		profileRepositry.save(profile);
 		
 		Map<String, String> emmitmap=new HashMap<>();

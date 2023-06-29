@@ -35,7 +35,7 @@ public class profile {
 	@Min(value = 21)
 	@Max(value = 70)
 	private int age;
-	@Size(min  = 8)
+//	@Size(min  = 8)
 	private String profilePic;
 	@DBRef(lazy = true)
 	private address address;

@@ -19,8 +19,8 @@ import lombok.NoArgsConstructor;
 @Document
 public class cart {
 
-//	@Id
-//	private int cartId;
+	@Id
+	private String cartId;
 //	private int productId;
 	private int quantity;
 	private int marchentId;
@@ -28,6 +28,16 @@ public class cart {
 	private LocalDateTime addedDateTime;
 	@DBRef(lazy = true)
 	private product product;
+	public cart(int quantity, int marchentId, String status, LocalDateTime addedDateTime,
+			com.cropdeal.entites.product product) {
+		super();
+		this.quantity = quantity;
+		this.marchentId = marchentId;
+		this.status = status;
+		this.addedDateTime = addedDateTime;
+		this.product = product;
+	}
+	
 	
 	
 }

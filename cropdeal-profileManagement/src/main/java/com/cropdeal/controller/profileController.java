@@ -6,19 +6,23 @@ import java.util.Map;
 import org.apache.commons.fileupload.portlet.PortletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cropdeal.entites.BankAccounts;
 import com.cropdeal.entites.address;
@@ -26,6 +30,7 @@ import com.cropdeal.entites.profile;
 import com.cropdeal.exception.noProfileFoundException;
 import com.cropdeal.service.profileService;
 
+import io.jsonwebtoken.io.IOException;
 import jakarta.validation.Valid;
 
 
@@ -36,6 +41,9 @@ public class profileController {
 	
 	@Autowired
 	private profileService profileServic;
+	
+	@Autowired
+	private com.cropdeal.service.imgservice imgservice;
 	
 	
 	
@@ -52,7 +60,7 @@ public class profileController {
 		}
 		profileServic.addprofile(userid ,profile);
 		
-		return new ResponseEntity<>("profile added",HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(new HashMap<>() ,HttpStatus.OK);
 		
 	}
 	
@@ -67,7 +75,7 @@ public class profileController {
 		}
 		profileServic.updateProfile(userid, profile);
 		
-		return new ResponseEntity<>("profile updated",HttpStatus.ACCEPTED);
+		return new ResponseEntity<>( new HashMap<>(),HttpStatus.OK);
 		
 	}
 	@GetMapping("/profile/{id}")
@@ -78,6 +86,15 @@ public class profileController {
 		
 	return profileServic.getprofileById(id);	
 	}
+	
+	@GetMapping("/getprofile")
+	public profile getprofile() throws noProfileFoundException{
+		
+		int userid=requestUserId();
+		return profileServic.getprofileById(userid);
+		
+	}
+	
 	
 	@PutMapping("/updateBankAccount")
 	public void updateBankAccount(@RequestBody BankAccounts bankAccount) throws noProfileFoundException {
@@ -99,6 +116,25 @@ public class profileController {
 		return Integer.parseInt(userId);
 		
 	}
+	
+	
+	@PostMapping("/uploadimg")
+	public ResponseEntity<?> uploadimg(@RequestParam("image") MultipartFile file) throws IOException, java.io.IOException{
+		imgservice.uploadimg(file);
+//		imgservice.uploadimg(file);
+		return ResponseEntity.status(HttpStatus.OK).body(new HashMap<>());
+		
+	}
+	
+	
+	@GetMapping("/downloadimg/{imgname}")
+	public ResponseEntity<?> downloadimage(@PathVariable String imgname){
+		
+		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(imgservice.downloadimg(imgname));
+		
+	}
+	
+	
 	
 	
 

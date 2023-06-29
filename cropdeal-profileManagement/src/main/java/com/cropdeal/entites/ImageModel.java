@@ -1,32 +1,27 @@
 package com.cropdeal.entites;
 
-import java.time.LocalDateTime;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @JsonIgnoreProperties({ "target", "source" })
+@Document
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document
-public class reviews {
-	
-	
-	@Id
-	private int reviewId;
-	private String productId;
-	private int farmerId;
-	private int dealearId;
-	private int rating;
-	private String description;
-	private LocalDateTime reviewDate;
-	
+@Builder
+public class ImageModel {
+
+		@Id
+	    private String name;
+	    private String type;
+	    private byte[] picByte;
 	
 }

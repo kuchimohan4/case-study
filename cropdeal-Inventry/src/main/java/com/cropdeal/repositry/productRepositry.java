@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.cropdeal.entites.product;
 
 @Repository
-public interface productRepositry extends MongoRepository<product, Integer>{
+public interface productRepositry extends MongoRepository<product, String>{
 
 	List<product> findByFarmerIdAndProductName(int formerId, String productName);
 	List<product> findByFarmerIdAndProductId(int farmerId, String productId);

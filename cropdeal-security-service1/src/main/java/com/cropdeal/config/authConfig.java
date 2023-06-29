@@ -22,7 +22,7 @@ public class authConfig {
 	@Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
-	 return http.csrf().disable() 
+	 return http.csrf().disable().cors().disable() 
 	 		.authorizeHttpRequests()
 			.requestMatchers("/auth/**").permitAll()
 			.and().build();

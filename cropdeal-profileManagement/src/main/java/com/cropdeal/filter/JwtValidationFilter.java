@@ -33,8 +33,6 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-
 		String jwtToken = extractJwtToken(request);
 		if (jwtToken != null) {
 
