@@ -27,6 +27,8 @@ public class apigatewayConfiguration {
 						)
 				.route(p -> p.path("/auth/**")
 						.uri("lb://SECURITY-SERVICE"))
+				.route(p -> p.path("/adminControl/**")
+						.uri("lb://SECURITY-SERVICE"))
 				.route(p -> p.path("/profile/**")
 						.uri("lb://PROFILE-MANAGEMENT-SERVICE"))
 				.route(p -> p.path("/inventry/**")

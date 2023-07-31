@@ -34,6 +34,7 @@ public class securityConfiguration {
 		return http.csrf().disable()
 				.addFilterBefore(new JwtValidationFilter(jwtUtilservice), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests()
+                .requestMatchers("/order/getOrdersOfDelearById/{delearId}").hasRole("ADMIN")
                 .requestMatchers("/order/placeOrder","/order/transactionconformation","/order/orderCartProducts","/order/cartPaymentConformation","/order/cancelorder/{orderId}").hasAnyRole("ADMIN","DEALER")
                 .requestMatchers("/order/swagger-ui/**").permitAll()
                 .anyRequest().permitAll()

@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
 import com.cropdeal.filter.JwtValidationFilter;
 import com.cropdeal.util.jwtUtilservice;
@@ -34,10 +35,14 @@ public class securityConfiguration {
 		return http.csrf().disable().cors().disable()
 				.addFilterBefore(new JwtValidationFilter(jwtUtilservice), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests()
-                .requestMatchers("/profile/addProfile","/profile/updateProfile","/profile/updateBankAccount","/profile/updateaddress","/profile/getprofile").hasAnyRole("ADMIN","FARMER","DEALER")
-                .requestMatchers("/profile/profile/{id}").hasAnyRole("ADMIN")
+                .requestMatchers("/profile/addProfile","/profile/updateProfile","/profile/updateBankAccount","/profile/updateaddress","/profile/getprofile","/profile/profile/{id}").hasAnyRole("ADMIN","FARMER","DEALER")
+//                .requestMatchers("/profile/profile/{id}").hasAnyRole("ADMIN")
                 .requestMatchers("/profile/swagger-ui/**").permitAll()
                 .anyRequest().permitAll()
+                .and().headers()
+                .frameOptions()
+                .disable()
+                .addHeaderWriter(new StaticHeadersWriter("X-Frame-Options", "ALLOW-FROM http://localhost:4200"))
                 .and()
                 .build();
 	}

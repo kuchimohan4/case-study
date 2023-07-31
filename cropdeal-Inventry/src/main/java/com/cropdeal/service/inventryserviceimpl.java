@@ -99,6 +99,7 @@ public class inventryserviceimpl implements inventryService {
 	public void deleteproduct(String id, int formerId) throws noProductFoundException {
 		
 		List<product> prodtOptional=productRepositry.findByFarmerIdAndProductId(formerId, id);
+		System.out.println(prodtOptional);
 		if(prodtOptional.size()==0) {
 			throw new noProductFoundException("no Such Product exists On ur Account");
 		}
@@ -129,8 +130,6 @@ public class inventryserviceimpl implements inventryService {
 		
 		Optional<cart> cartitem=cartRepositry.findByProductProductIdAndMarchentId(inputdata.get("productId"),merchentId);
 		if (cartitem.isPresent()) {
-//			throw  new noProductFoundException("product already exists in your cart");
-			System.out.println("cart't presrt");
 			if(Integer.parseInt( inputdata.get("quantity"))+cartitem.get().getQuantity()>product.getAvailableQuantity()) {
 				throw  new noProductFoundException("insuffitiant quantity please enter quantity less than "+product.getAvailableQuantity());
 			}
@@ -141,7 +140,6 @@ public class inventryserviceimpl implements inventryService {
 		if(Integer.parseInt( inputdata.get("quantity"))>product.getAvailableQuantity()) {
 			throw  new noProductFoundException("insuffitiant quantity please enter quantity less than "+product.getAvailableQuantity());
 		}
-		System.out.println("cart presrt");
 		return cartRepositry.save(new cart( Integer.parseInt( inputdata.get("quantity")), merchentId, "incart", LocalDateTime.now(), product));
 	}
 	
@@ -154,6 +152,11 @@ public class inventryserviceimpl implements inventryService {
 				throw  new noProductFoundException("u dont have enpogh of this products to remove"+product.getAvailableQuantity());
 			}
 			cart cartitemdbCart=cartitem.get();
+			
+			if(((cartitem.get().getQuantity()-Integer.parseInt( inputdata.get("quantity")))==0)) { 
+				removefromCart(product.getProductId(),cartitem.get().getMarchentId());
+				 return new cart();
+			}
 			cartitemdbCart.setQuantity(cartitem.get().getQuantity()-Integer.parseInt( inputdata.get("quantity")));
 			return cartRepositry.save(cartitemdbCart);
 		}else {
@@ -223,7 +226,7 @@ public class inventryserviceimpl implements inventryService {
 	     }
 	     
 		product product=getProductById(productId);
-		reviews reviews2=new reviews(gentratereviewid() ,productId,product.getFarmerId(),dealerid,reviews.getRating(),reviews.getDescription(),LocalDateTime.now());
+		reviews reviews2=new reviews(gentratereviewid() ,productId,product.getFarmerId(),dealerid,reviews.getRating(),reviews.getReview(),reviews.getDescription(),LocalDateTime.now());
 		List<reviews> productReviews= product.getReviews();
 		productReviews.add(reviews2);
 		product.setReviews(productReviews);
@@ -274,7 +277,7 @@ public class inventryserviceimpl implements inventryService {
 		
 		return  reviewRepostry.findReviewWithMaxReviewId().getReviewId()+1;
 	}
-
+	
 	@Override
 	public String orderPlaced(Map<String, String> orderdetails) throws noProductFoundException {
 		
@@ -349,6 +352,20 @@ public class inventryserviceimpl implements inventryService {
 		    }
 		    return avgRating;
 	}
+
+	@Override
+	public boolean isDelearAddedreviewForProduct(int delearId, String productId) {
+		// TODO Auto-generated method stub
+	    return	reviewRepostry.findByProductIdAndDealearId(productId, delearId).isPresent();
+	}
+
+	@Override
+	public List<reviews> getReviewsByProductId(String productId) {
+		
+		
+		return reviewRepostry.findByProductId(productId);
+	}
+
 	
 	
 	

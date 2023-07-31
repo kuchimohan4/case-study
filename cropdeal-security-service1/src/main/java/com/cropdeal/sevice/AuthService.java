@@ -1,8 +1,10 @@
 package com.cropdeal.sevice;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -124,6 +126,37 @@ public class AuthService {
 		userCredentials userCredential=usercred.orElse(null);
 		
 		return userCredential.getId();
+	}
+
+	public List<userCredentials> getFarmers() {
+		
+		
+		List<userCredentials> farmerList=userCreantialsRepositry.findByRoleAndEnabled("FARMER", true);
+		List<userCredentials> finalfarmerList=new ArrayList<>();
+		farmerList.forEach((farmer)->{
+			farmer.setPassword("");
+			finalfarmerList.add(farmer);
+		});
+		
+		return finalfarmerList;
+	}
+
+	public void changeAccountStatus(userCredentials userdCredentials) throws InvalidOtpException{
+		
+		userCredentials usercredFromDb=	userCreantialsRepositry.findById(userdCredentials.getId()).orElseThrow(()->new InvalidOtpException("no user found with id"+userdCredentials.getId()));
+		usercredFromDb.setAccountNonLocked(userdCredentials.isAccountNonLocked());
+		userCreantialsRepositry.save(usercredFromDb);
+	}
+
+	public List<userCredentials> getDelears() {
+		List<userCredentials> delearList=userCreantialsRepositry.findByRoleAndEnabled("DEALER", true);
+		List<userCredentials> finaldelearList=new ArrayList<>();
+		delearList.forEach((farmer)->{
+			farmer.setPassword("");
+			finaldelearList.add(farmer);
+		});
+		
+		return finaldelearList;
 	}
 	
 	

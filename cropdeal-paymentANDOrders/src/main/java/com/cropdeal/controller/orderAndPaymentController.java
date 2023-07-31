@@ -1,7 +1,10 @@
 package com.cropdeal.controller;
 
+import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cropdeal.entites.copons;
@@ -32,6 +36,9 @@ public class orderAndPaymentController {
 	@Autowired
 	private orderService orderService;
 	
+	
+	private static final Logger logger = LoggerFactory.getLogger(orderAndPaymentController.class);
+	
 	@PostMapping("/placeOrder")
 	public transactionDetails placeOrder(@RequestBody Map<String, String> inputMap) throws noProductFoundException, invalidQuantityException, RazorpayException {
 		
@@ -39,7 +46,7 @@ public class orderAndPaymentController {
 //		quantity
 //		copon
 		int dealearid=requestUserId();
-		
+		logger.info("Delear with ID:"+dealearid+" id tring to place order order Genarated");
 	    return	orderService.placeOrder(dealearid,inputMap);
 		
 	}
@@ -51,7 +58,7 @@ public class orderAndPaymentController {
 //		razorpay_payment_id
 //		razorpay_order_id
 //		razorpay_signature
-		
+		logger.info("receving payment Conformation from front end");
 		return orderService.paymentConformation(paymentdetails);
 		
 	}
@@ -60,7 +67,7 @@ public class orderAndPaymentController {
 	public transactionDetails orderCartProducts(@RequestBody Map<String, String> inputMap) throws noProductFoundException, invalidQuantityException, RazorpayException {
 //		copon
 		int dealearid=requestUserId();
-		
+		logger.info("Delear with ID:"+dealearid+" id tring to place order order Genarated");
 	    return	orderService.orderCartProducts(dealearid,inputMap);
 		
 	}
@@ -73,7 +80,7 @@ public class orderAndPaymentController {
 //		razorpay_payment_id
 //		razorpay_order_id
 //		razorpay_signature
-		
+		logger.info("receving payment Conformation from front end");
 		return orderService.cartPaymentConformation(paymentdetails);
 		
 	}
@@ -81,6 +88,7 @@ public class orderAndPaymentController {
 	@DeleteMapping("/cancelorder/{orderId}")
 	public orders cancelorder(@PathVariable int orderId) throws noProductFoundException {
 		int dealearid=requestUserId();
+		logger.info("Delear With ID:"+dealearid+"is trying cancel the order");
 		return orderService.cancelorder(orderId,dealearid);
 		
 	}
@@ -106,11 +114,39 @@ public class orderAndPaymentController {
 		
 	}
 	
+	@GetMapping("/getOrders")
+	public List<orders> getordersOfDealer(){
+		
+		int dealearid=requestUserId();
+		return orderService.getorderByDealear(dealearid);
+	}
+	
+	@GetMapping("/getOrdersOfDelearById/{delearId}")
+	public List<orders> getordersOfDealerById(@PathVariable int delearId){
+		
+		return orderService.getorderByDealear(delearId);
+	}
+	
+	@GetMapping("/getOrdersOfFaremer")
+	public List<orders> getordersOfFarmer(){
+		int farmerId=requestUserId();
+		return orderService.getorderByFarmer(farmerId);
+	}
+	
+	@GetMapping("/getAllOrders")
+	public List<orders> getALlOrders(){
+		return orderService.getALlOrders();
+	}
+
+	
 
 	@ExceptionHandler()
 	public ResponseEntity<String> handleemailalredyexist(Exception ex){
 		
 		return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
+	
+	
+	
 	
 }

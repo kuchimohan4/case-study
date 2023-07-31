@@ -1,6 +1,7 @@
 package com.cropdeal.entites;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -17,14 +18,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class transactions {
+public class transactions {	
 	
 	@jakarta.persistence.Id
 	@Column(length = 100)
 	private String transactionId;
 	private String status;
 	private int dealearId;
-	private List<Integer> farmerIdList;
+	private Collection<Integer> farmerIdList;
 	private double amount;
 	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime transactionTime;

@@ -11,20 +11,28 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.cropdeal.filter.JwtValidationFilter;
 import com.cropdeal.sevice.customUserDetailservice;
+import com.cropdeal.sevice.jwtService;
 
 
 
 @Configuration
 public class authConfig {
 	
+	private jwtService jtwService=new jwtService();
+	
 	@Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
 	 return http.csrf().disable().cors().disable() 
+			 .addFilterBefore(new JwtValidationFilter(jtwService), UsernamePasswordAuthenticationFilter.class)
 	 		.authorizeHttpRequests()
-			.requestMatchers("/auth/**").permitAll()
+	 		.requestMatchers("/adminControl/getFarmers","/adminControl/changeAccountStatus").hasRole("ADMIN")
+			.requestMatchers("/auth/register","/auth/validateMail","/auth/token","/auth/validate").permitAll()
+			.anyRequest().permitAll()
 			.and().build();
 	 
 	

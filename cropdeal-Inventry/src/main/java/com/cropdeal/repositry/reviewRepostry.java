@@ -19,6 +19,8 @@ public interface reviewRepostry extends MongoRepository<reviews, Integer>{
 	
 	void deleteByProductIdAndDealearId(String productId, int dealearId);
 	
+	List<reviews> findByProductId(String productId);
+	
 	@Aggregation(pipeline = {
 		    "{$sort: {reviewId: -1}}",
 		    "{$limit: 1}"

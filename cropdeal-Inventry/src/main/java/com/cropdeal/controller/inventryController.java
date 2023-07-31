@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +34,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/inventry")
 public class inventryController {
-
+	private static final Logger logger = LoggerFactory.getLogger(inventryController.class);
 	@Autowired
 	private inventryService inventryService;
 
@@ -43,10 +45,10 @@ public class inventryController {
 		if (bindingResult.hasErrors()) {
 			Map<String, String> errormap = new HashMap<>();
 			bindingResult.getFieldErrors().forEach(error -> errormap.put(error.getField(), error.getDefaultMessage()));
-
+			logger.error("Farmer with Id:"+formerId+" is failed to add  product");
 			return new ResponseEntity<>(errormap, HttpStatus.BAD_REQUEST);
 		}
-
+		logger.info("Farmer with Id:"+formerId+" is adding an product");
 		return new ResponseEntity<>(inventryService.addproduct(formerId,product), HttpStatus.OK);
 	}
 
@@ -61,7 +63,7 @@ public class inventryController {
 			return new ResponseEntity<>(errormap, HttpStatus.BAD_REQUEST);
 		}
 		int farmerId=requestUserId();
-
+		logger.info("Farmer with Id:"+farmerId+" is updating an product");
 		return new ResponseEntity<>(inventryService.updateproduct(product,farmerId), HttpStatus.OK);
 	}
 
@@ -73,6 +75,7 @@ public class inventryController {
 		int formerId = requestUserId();
 
 		inventryService.deleteproduct(id, formerId);
+		logger.info("Farmer with Id:"+formerId+" is deleting an product");
 		return new ResponseEntity<HttpStatus>(HttpStatus.ACCEPTED);
 	}
 
@@ -155,6 +158,7 @@ public class inventryController {
 	@PostMapping("/orderplaced")
 	public String orderPlaced(@RequestBody Map<String, String> orderdetails ) throws noProductFoundException {
 //		System.out.println("hello");
+		logger.info("product with ID:"+orderdetails.get("productId")+" is ordered");
 		return inventryService.orderPlaced(orderdetails);
 		
 	}
@@ -171,6 +175,7 @@ public class inventryController {
 	@DeleteMapping("/orderCanceled")
 	public String orderCanceled(@RequestBody Map<String, String> orderdetails ) throws noProductFoundException {
 //		System.out.println("hello");
+		logger.info("product with ID:"+orderdetails.get("productId")+"has been canceled");
 		return inventryService.orderCanceled(orderdetails);
 		
 	}

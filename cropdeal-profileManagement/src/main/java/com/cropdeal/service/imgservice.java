@@ -49,4 +49,14 @@ public class imgservice {
 		return imOptional.get().builder().picByte(imageutil.decompressImage(imOptional.get().getPicByte())).build();
 			
 		}
+
+	public imagerepostyry getImageRepository() {
+		return imageRepository;
+	}
+
+	public void setImageRepository(imagerepostyry imageRepository) {
+		this.imageRepository = imageRepository;
+	}
+
+	
 }

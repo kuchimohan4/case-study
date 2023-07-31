@@ -51,18 +51,6 @@ public class userCredentials {
 	public void setRole(String role) {
 		this.role = role;
 	}
-	public userCredentials(int id, String name, String email, String password, String role) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.email = email;
-		this.password = password;
-		this.role = role;
-	}
-	public userCredentials() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
 	
 	
 	

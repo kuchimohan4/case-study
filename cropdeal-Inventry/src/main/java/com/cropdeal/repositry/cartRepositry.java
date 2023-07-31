@@ -14,9 +14,11 @@ import java.util.List;
 public interface cartRepositry extends MongoRepository<cart, String>{
 	
 	Optional<cart>  findByProductProductIdAndMarchentId(String productProductId, int marchentId);
+	Optional<cart>  findByMarchentIdAndProductProductId(int marchentId ,String productProductId );
 	List<cart> findByMarchentId(int marchentId);
 	void deleteByMarchentId(int marchentId);
 	void deleteByProductProductIdAndMarchentId(String productProductId, int marchentId);
+	
 
 }
 

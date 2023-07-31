@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +33,8 @@ import com.cropdeal.service.profileService;
 
 import io.jsonwebtoken.io.IOException;
 import jakarta.validation.Valid;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController 
 @RequestMapping("/profile")
@@ -46,6 +48,8 @@ public class profileController {
 	private com.cropdeal.service.imgservice imgservice;
 	
 	
+	private static final Logger logger = LoggerFactory.getLogger(profileController.class);
+	
 	
 	@PostMapping("/addProfile")
 	public ResponseEntity<?> addprofile(@Valid @RequestBody profile profile,BindingResult bindingResult) throws noProfileFoundException {
@@ -55,11 +59,11 @@ public class profileController {
 		if(bindingResult.hasErrors()) {
 			Map<String, String> errormap=new HashMap<>();
 			bindingResult.getFieldErrors().forEach(error -> errormap.put(error.getField(), error.getDefaultMessage()));
-			
+			logger.error("user with ID:"+userid+" has failed to profile");
 			return new ResponseEntity<>(errormap, HttpStatus.BAD_REQUEST) ;
 		}
 		profileServic.addprofile(userid ,profile);
-		
+		logger.info("user with ID:"+userid+" has added profile");
 		return new ResponseEntity<>(new HashMap<>() ,HttpStatus.OK);
 		
 	}
@@ -74,7 +78,7 @@ public class profileController {
 			return new ResponseEntity<>(errormap, HttpStatus.BAD_REQUEST) ;
 		}
 		profileServic.updateProfile(userid, profile);
-		
+		logger.info("user with ID:"+userid+" has updated profile");
 		return new ResponseEntity<>( new HashMap<>(),HttpStatus.OK);
 		
 	}
@@ -100,12 +104,14 @@ public class profileController {
 	public void updateBankAccount(@RequestBody BankAccounts bankAccount) throws noProfileFoundException {
 		int userid=requestUserId();
 		profileServic.updateBankAccount(userid, bankAccount);
+		logger.info("user with ID:"+userid+" has updated bank details");
 	}
 	
 	@PutMapping("/updateaddress")
 	public void updateAddress(@RequestBody address address) throws noProfileFoundException {
 		int userid=requestUserId();
 		profileServic.updateaddress(userid, address);
+		logger.info("user with ID:"+userid+" has updated address deytails ");
 	}
 	
 	
@@ -132,6 +138,14 @@ public class profileController {
 		
 		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(imgservice.downloadimg(imgname));
 		
+	}
+	
+	
+
+	@ExceptionHandler()
+	public ResponseEntity<String> handleemailalredyexist(Exception ex){
+		
+		return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 	
 	

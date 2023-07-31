@@ -15,4 +15,5 @@ public interface productRepositry extends MongoRepository<product, String>{
 	List<product> deleteByProductId(String productId);
 	List<product> findByProductId(String productId);
 	List<product> findByFarmerId(int farmerId);
+	Object findByProductIdAndFarmerId(String anyString, int anyInt);
 }

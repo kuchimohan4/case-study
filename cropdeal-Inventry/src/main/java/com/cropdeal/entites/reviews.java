@@ -25,6 +25,7 @@ public class reviews {
 	private int farmerId;
 	private int dealearId;
 	private int rating;
+	private String review;
 	private String description;
 	private LocalDateTime reviewDate;
 	

@@ -1,5 +1,6 @@
 package com.cropdeal.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.cropdeal.entites.copons;
@@ -24,5 +25,11 @@ public interface orderService {
 	copons getCouponByName(String couponCode) throws noProductFoundException;
 
 	orders getOrderByOrderId(int orderId, int dealerid) throws noProductFoundException;
+
+	List<orders> getorderByDealear(int dealearid);
+
+	List<orders> getorderByFarmer(int farmerId);
+
+	List<orders> getALlOrders();
 
 }

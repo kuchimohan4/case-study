@@ -30,6 +30,10 @@ import com.cropdeal.repositry.orderRepostry;
 import com.cropdeal.repositry.transactionRepostry;
 import com.razorpay.RazorpayException;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
+//import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
 @Service
 public class orderserviceImpl implements orderService {
 	
@@ -51,6 +55,8 @@ public class orderserviceImpl implements orderService {
 	private transactionRepostry transactionRepostry;
 	
 
+	
+	@CircuitBreaker(name="fallBackMethod")
 	@Override
 	public transactionDetails placeOrder(int dealearid, Map<String, String> inputMap) throws noProductFoundException, invalidQuantityException, RazorpayException {
 		
@@ -385,9 +391,45 @@ public class orderserviceImpl implements orderService {
 		
 		return orderRepostry.findByMarchentIdAndOrderIdAndStatus(dealerid, orderId, "success").orElseThrow(()->new noProductFoundException("no order with orde Id"+orderId));
 	}
+
+
+
+	@Override
+	public List<orders> getorderByDealear(int dealearid) {
+		
+	    	
+		
+		return orderRepostry.findByMarchentIdAndStatus(dealearid,"success");
+	}
+
+
+
+
+	@Override
+	public List<orders> getorderByFarmer(int farmerId) {
+		List<orders> orderList=orderRepostry.findAll();
+		List<orders> farmerorders=new ArrayList<>();
+		for(orders order:orderList) {
+		if(order.getTransactions().getFarmerIdList().contains(farmerId)) {
+			farmerorders.add(order);
+		}
+		}
+		return farmerorders;
+	}
+
+
+	@Override
+	public List<orders> getALlOrders() {
+		// TODO Auto-generated method stub
+		
+		return orderRepostry.findAll();
+	}
 	
 	
-	
+	public void fallBackMethod(Exception ex) throws noProductFoundException {
+		
+		throw new noProductFoundException("Internal server error or server down ");
+	}
 	
 
 }

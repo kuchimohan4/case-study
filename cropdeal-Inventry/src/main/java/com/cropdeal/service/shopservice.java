@@ -14,5 +14,8 @@ public interface shopservice {
 	List<shop> gettallshops();
 
 	shop getShopById(int id) throws noshopfoundexception ;
+	public boolean doesFarmerHaveShop(int farmerId);
+
+	
 
 }

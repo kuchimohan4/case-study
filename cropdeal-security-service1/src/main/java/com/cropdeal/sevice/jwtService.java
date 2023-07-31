@@ -28,8 +28,13 @@ public class jwtService {
 	
 	
 	
-	public void validateToken(final String token){
+	public Claims validateToken(final String token){
+		
 		Jws<Claims> claimsJws=Jwts.parserBuilder().setSigningKey(getSignKey()).build().parseClaimsJws(token);
+		
+		Claims claims=claimsJws.getBody();
+		
+		return claims;
 	}
 	
 	

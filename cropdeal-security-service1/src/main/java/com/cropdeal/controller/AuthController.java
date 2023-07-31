@@ -1,8 +1,11 @@
 package com.cropdeal.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +35,8 @@ import jakarta.validation.Valid;
 @CrossOrigin("http://localhost:4200")
 public class AuthController {
 	
+	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+	
 	@Autowired
 	private AuthService authService;
 	
@@ -45,12 +50,13 @@ public class AuthController {
 		if (bindingResult.hasErrors()) {
 			Map<String, String> errormap = new HashMap<>();
 			bindingResult.getFieldErrors().forEach(error -> errormap.put(error.getField(), error.getDefaultMessage()));
-
+			
 			return new ResponseEntity<>(errormap, HttpStatus.BAD_REQUEST);
 		}
 		Map<String, String> resmap = new HashMap<>();
 		authService.saveUser(userCredentials);
 		resmap.put("msg", "otp sent u");
+		logger.info("some one with name "+userCredentials.getName()+" is registering for role"+userCredentials.getRole());
 		return new ResponseEntity<>(resmap ,HttpStatus.OK);
 		
 	}
@@ -62,7 +68,7 @@ public class AuthController {
 		
 		Map<String, String> resmap = new HashMap<>();
 		resmap.put("msg", authService.validateMail(otp));
-		
+		logger.info("otp is being validated for some user");
 		return new ResponseEntity<>(resmap ,HttpStatus.OK);
 
 	}
@@ -78,9 +84,10 @@ public class AuthController {
 			authmap.put("role", authentication.getAuthorities().iterator().next().getAuthority());
 			authmap.put("id", ""+userId);
 			authmap.put("expirationTime", ""+60*60);
-			
+			logger.info(userCredentials.getEmail()+" has logedin");
 		return authmap;
 		}else {
+			logger.error(userCredentials.getEmail()+" has failed logedin");
 			throw new RuntimeException("invalid user");
 		}
 	}
@@ -92,11 +99,15 @@ public class AuthController {
 	}
 	
 	
+	
+	
 	@ExceptionHandler()
 	public ResponseEntity<String> handleemailalredyexist(Exception ex){
 		
 		return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
+	
+	
 	
 
 }

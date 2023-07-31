@@ -1,8 +1,12 @@
 package com.cropdeal.controller;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,12 +33,13 @@ public class riviewController {
 	@Autowired
 	private inventryService inventryService;
 	
+	private static final Logger logger = LoggerFactory.getLogger(reviews.class);
 	
 	@PostMapping("/addReview/{productId}")
 	public reviews addreview(@RequestBody reviews reviews,@PathVariable("productId") String productid) throws noProductFoundException {
 		
 		int dealerid=requestUserId();
-		
+		logger.info("Delear with ID:"+dealerid+" is adding review to product with ID:"+productid);
 		return inventryService.addreview(productid, reviews,dealerid);
 	}
 	
@@ -44,6 +49,7 @@ public class riviewController {
 		int dealerid=requestUserId();
 
 		inventryService.removereview(productid,dealerid);
+		logger.info("Delear with ID:"+dealerid+" is deleating review to product with ID:"+productid);
 		return new ResponseEntity<HttpStatus>(HttpStatus.ACCEPTED);
 	}
 	
@@ -52,8 +58,14 @@ public class riviewController {
 		
 		int dealerid=requestUserId();
 
-		
+		logger.info("Delear with ID:"+dealerid+" is updating review to product with ID:"+productid);
 		return  inventryService.updatereview(productid, reviews,dealerid);
+	}
+	
+	@GetMapping("/getReviewsByProductId/{productId}")
+	public List<reviews> getReviewsByProductId(@PathVariable String productId){
+		
+		return inventryService.getReviewsByProductId(productId);
 	}
 	
 	private int requestUserId() {
@@ -71,7 +83,16 @@ public class riviewController {
 		return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 	
-	@GetMapping("getavgreviewofshop/{id}")
+	
+	@GetMapping("/isDelearAddedreviewForProduct/{productId}")
+	public ResponseEntity<?> isDelearAddedreview(@PathVariable String productId){
+		int delearId=requestUserId();
+		
+		
+		return ResponseEntity.status(HttpStatus.OK).body(Collections.singletonMap("added", inventryService.isDelearAddedreviewForProduct(delearId,productId)));
+	}
+	
+	@GetMapping("/getavgreviewofshop/{id}")
 	ResponseEntity<?> getavgreviewofshop(@PathVariable int id){
 		
 		
@@ -81,7 +102,7 @@ public class riviewController {
 		return new ResponseEntity<>(avgratingmap, HttpStatus.OK);
 	}
 	
-	@GetMapping("getavgreviewofProduct/{id}")
+	@GetMapping("/getavgreviewofProduct/{id}")
 	ResponseEntity<?> getavgreviewofProduct(@PathVariable String id){
 		
 		
@@ -90,5 +111,7 @@ public class riviewController {
 		
 		return new ResponseEntity<>(avgratingmap, HttpStatus.OK);
 	}
+	
+
 	
 }

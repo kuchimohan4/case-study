@@ -31,5 +31,7 @@ public interface inventryService {
 	public Double getavgreviewofshop(int id);
 	double getavgRatingOfProduct(String productId);
 	cart reduceProductsFromcart(int merchentId, Map<String, String> inputdata) throws noProductFoundException;
-
+	public boolean isDelearAddedreviewForProduct(int delearId, String productId);
+	public List<reviews> getReviewsByProductId(String productId);
+	
 }

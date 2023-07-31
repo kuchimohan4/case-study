@@ -18,11 +18,6 @@ public class shopServiceImpl implements shopservice {
 
 	@Override
 	public shop newshop(shop usershop,int shopid) throws noshopfoundexception{
-		
-//		shoprepositry.findById(shopid).ifPresent((shopdb)->{
-//			throw new noshopfoundexception("shop alreay exists please update instad");
-//			});
-		System.out.println(usershop.getShopName());
 		if(shoprepositry.findById(shopid).isPresent()) {
 			throw new noshopfoundexception("shop alreay exists please update instad");
 		}
@@ -44,7 +39,6 @@ public class shopServiceImpl implements shopservice {
 
 	@Override
 	public List<shop> gettallshops() {
-		// TODO Auto-generated method stub
 		return shoprepositry.findAll();
 	}
 
@@ -53,5 +47,12 @@ public class shopServiceImpl implements shopservice {
 		
 		return shoprepositry.findById(id).orElseThrow(()->new noshopfoundexception("no shop with id"+id));
 	}
+
+	@Override
+	public boolean doesFarmerHaveShop(int farmerId) {
+		return shoprepositry.findById(farmerId).isPresent();
+	}
+
+	
 
 }
