@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cropdeal.dtos.OtpReqDto;
+import jakarta.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +47,7 @@ public class AuthController {
 	
 	
 	@PostMapping("/register")
-	public ResponseEntity<?> addNewUser(@Valid @RequestBody userCredentials userCredentials,BindingResult bindingResult) {
+	public ResponseEntity<?> addNewUser(@Valid @RequestBody userCredentials userCredentials,BindingResult bindingResult) throws MessagingException {
 		
 		if (bindingResult.hasErrors()) {
 			Map<String, String> errormap = new HashMap<>();
@@ -63,7 +65,7 @@ public class AuthController {
 	
 	
 	@PostMapping("/validateMail")
-	public ResponseEntity<?> validateMail(@RequestBody Map<String, String> otp) throws InvalidOtpException {
+	public ResponseEntity<?> validateMail(@RequestBody OtpReqDto otp) throws InvalidOtpException, MessagingException {
 		
 		
 		Map<String, String> resmap = new HashMap<>();

@@ -1,9 +1,17 @@
 package com.cropdeal.mail;
 
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
 
 @Service
 public class mailSenderServiceimpl implements mailsenderservice {
@@ -11,7 +19,7 @@ public class mailSenderServiceimpl implements mailsenderservice {
 	@Autowired
 	private JavaMailSender javaMailSender;
 	
-	public void sendProfileAddedMail(String toEmail, String firstName) {
+	public void sendProfileAddedMail(String toEmail, String firstName) throws MessagingException {
 	    String subject = "Profile Updated";
 	    String body = "Dear " + firstName + " " + ",\n\n"
 	            + "We are writing to inform you that your profile has been successfully updated.\n"
@@ -26,7 +34,7 @@ public class mailSenderServiceimpl implements mailsenderservice {
 	
 	
 	@Override
-	public void sendotpForregistration(String toEmail, String name,String otp) {
+	public void sendotpForregistration(String toEmail, String name,String otp) throws MessagingException {
 		String subject = "Registration OTP";
 	    String body = "Dear " + name + ",\n\n"
 	            + "Thank you for registering with our application!\n"
@@ -39,7 +47,7 @@ public class mailSenderServiceimpl implements mailsenderservice {
 		
 	}
 	@Override
-	public void sendregistrationSuccessMail(String toEmail, String name) {
+	public void sendregistrationSuccessMail(String toEmail, String name) throws MessagingException {
 	    String subject = "Registration Successful";
 	    String body = "Dear " + name + ",\n\n"
 	            + "Congratulations! Your registration is successful.\n"
@@ -50,12 +58,18 @@ public class mailSenderServiceimpl implements mailsenderservice {
 	    sendEmail(toEmail, subject, body);
 	}
 
-	private void sendEmail(String toEmail, String subject, String body) {
-	    SimpleMailMessage message = new SimpleMailMessage();
-	    message.setFrom("kuchimohan4@gmail.com");
-	    message.setTo(toEmail);
-	    message.setSubject(subject);
-	    message.setText(body);
+	private void sendEmail(String toEmail, String subject, String body) throws MessagingException {
+		MimeMessage message = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message, true);
+		helper.setFrom("kuchimohan4@gmail.com");
+		helper.setTo(toEmail);
+		helper.setSubject(subject);
+		helper.setText(body);
+//		FileSystemResource file = new FileSystemResource(new File("C:\\Users\\KUMOHAN\\Downloads\\src.zip"));
+//		helper.addAttachment("src.zip", file);
+
+
+
 	    javaMailSender.send(message);
 	    System.out.println("Mail sent successfully.");
 	}

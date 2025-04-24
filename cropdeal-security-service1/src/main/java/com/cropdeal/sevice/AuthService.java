@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
+import com.cropdeal.dtos.OtpReqDto;
+import com.cropdeal.mail.mailsenderservice;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +25,7 @@ import com.cropdeal.exception.InvalidOtpException;
 import com.cropdeal.rabbitmq.rabbitmqEmitter;
 import com.cropdeal.repository.otpMangerRepositry;
 import com.cropdeal.repository.userCreantialsRepositry;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
@@ -40,15 +44,19 @@ public class AuthService {
 	
 	@Autowired
 	private rabbitmqEmitter rabbitmqEmitter;
-	
-	public String saveUser(userCredentials userCredentials) {
+
+	@Autowired
+	private mailsenderservice mailsenderservice;
+
+	@Transactional
+	public String saveUser(userCredentials userCredentials) throws MessagingException {
 		
 		userCreantialsRepositry.findByEmail(userCredentials.getEmail()).ifPresent((obj)->{ throw new EmailAlreadyExistsException("Email alredy exists please login"); });
 		userCredentials.setPassword(passwordEncoder.encode(userCredentials.getPassword()));
 		userCredentials.setEnabled(false);
 		userCredentials.setAccountNonLocked(true);
 		userCreantialsRepositry.save(userCredentials);
-		System.out.println(userCredentials.getRole());
+//		System.out.println(userCredentials.getRole());
 		
 		//otp genration
 		Random random=new Random();
@@ -57,23 +65,25 @@ public class AuthService {
 		otpMangerRepositry.save(otpManager);
 		
 //		mail
-		Map<String, String> mailmap=new HashMap<>();
-		mailmap.put("email", userCredentials.getEmail());
-		mailmap.put("name", userCredentials.getName());
-		mailmap.put("type", "AccountRegistration");
-		mailmap.put("otp", ""+otp);
+//		Map<String, String> mailmap=new HashMap<>();
+//		mailmap.put("email", userCredentials.getEmail());
+//		mailmap.put("name", userCredentials.getName());
+//		mailmap.put("type", "AccountRegistration");
+//		mailmap.put("otp", ""+otp);
 		
-		rabbitmqEmitter.emmitmsg(mailmap);
+//		rabbitmqEmitter.emmitmsg(mailmap);
+		mailsenderservice.sendotpForregistration(userCredentials.getEmail(),userCredentials.getName(),otp+"");
 		
 		
 		return "otp sent to mail for validation";
 		
 	}
-	
-	public String validateMail(Map<String, String> otp) throws InvalidOtpException {
+
+	@Transactional
+	public String validateMail(OtpReqDto otp) throws InvalidOtpException, MessagingException {
 		
-		String mail=otp.get("email");
-		int otpentered=Integer.parseInt(otp.get("otp"));
+		String mail=otp.getEmail();
+		int otpentered=otp.getOtp();
 		userCredentials userCredentials=   userCreantialsRepositry.findByEmail(mail).orElseThrow(()-> new InvalidOtpException("invalid email id"));
 		if(userCredentials.getEnabled()) {
 			throw new InvalidOtpException("eMail already verified");
@@ -94,8 +104,8 @@ public class AuthService {
 		mailmap.put("email", userCredentials.getEmail());
 		mailmap.put("name", userCredentials.getName());
 		mailmap.put("type", "ValidatedMail");
-		
-		rabbitmqEmitter.emmitmsg(mailmap);
+		mailsenderservice.sendregistrationSuccessMail(userCredentials.getEmail(), userCredentials.getName());
+//		rabbitmqEmitter.emmitmsg(mailmap);
 //		otpMangerRepositry.deleteByGenratedFor(mail);
 		
 		return "user added sucessfully";
