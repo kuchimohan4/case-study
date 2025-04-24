@@ -3,14 +3,12 @@ package com.cropdeal.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.hibernate.grammars.hql.HqlParser.CubeContext;
+import com.cropdeal.util.BuilderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import com.cropdeal.entites.bills;
@@ -19,8 +17,8 @@ import com.cropdeal.entites.orders;
 import com.cropdeal.entites.transactions;
 import com.cropdeal.exception.invalidQuantityException;
 import com.cropdeal.exception.noProductFoundException;
-import com.cropdeal.models.cart;
-import com.cropdeal.models.product;
+import com.cropdeal.models.cartDto;
+import com.cropdeal.models.productdto;
 import com.cropdeal.models.transactionDetails;
 import com.cropdeal.rabbitmq.rabbitmqEmitter;
 import com.cropdeal.repositry.billRepostry;
@@ -53,6 +51,12 @@ public class orderserviceImpl implements orderService {
 	
 	@Autowired
 	private transactionRepostry transactionRepostry;
+
+	@Autowired
+	private inventryService inventryService;
+
+	@Autowired
+	private BuilderUtils builderUtils;
 	
 
 	
@@ -64,7 +68,7 @@ public class orderserviceImpl implements orderService {
 //		quantity
 //		copon
 	
-		product product= proxy.getProductById(inputMap.get("productId"));
+		productdto product= proxy.getProductById(inputMap.get("productId"));
 		
 		if (product.getAvailableQuantity()<Integer.parseInt(inputMap.get("quantity"))) {
 			throw new invalidQuantityException("Invalid quantity please enter quantity less than "+product.getAvailableQuantity());
@@ -163,7 +167,7 @@ public class orderserviceImpl implements orderService {
 	}
 
 
-	private orders genarateOrder(product product, int quantity,int dealearid,transactions transaction,String copon,double totalamount) throws noProductFoundException {
+	private orders genarateOrder(productdto product, int quantity, int dealearid, transactions transaction, String copon, double totalamount) throws noProductFoundException {
 		
 		List<Integer>  quantitylist=new ArrayList<>();
 		quantitylist.add(quantity);
@@ -200,14 +204,14 @@ public class orderserviceImpl implements orderService {
 		
 //		copon
 		
-		List<cart> cartlist=proxy.getCartItemsByMarchentprox(dealearid);
+		List<cartDto> cartlist = inventryService.getCartitemsCartsBymarchent(dealearid).stream().map(c -> builderUtils.carttoDtoMapping(c)).toList();
 		
 		double totalamount=0;
 		List<Integer>  farmeridlist=new ArrayList<>();
 		List<String>  producidtlist=new ArrayList<>();
 		List<Integer>  quantitylist=new ArrayList<>();
-		for(cart cart:cartlist) {
-			product product= cart.getProduct();
+		for(cartDto cart:cartlist) {
+			productdto product= cart.getProduct();
 			producidtlist.add(product.getProductId());
 			farmeridlist.add(product.getFarmerId());
 			quantitylist.add(cart.getQuantity());

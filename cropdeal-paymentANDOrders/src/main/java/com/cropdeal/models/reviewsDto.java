@@ -2,6 +2,7 @@ package com.cropdeal.models;
 
 import java.time.LocalDateTime;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,14 +10,16 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class cart {
 
+public class reviewsDto {
+	
 
-	private int quantity;
-	private int marchentId;
-	private String status;
-	private LocalDateTime addedDateTime;
-	private product product;
+	private int reviewId;
+	private String productId;
+	private int dealearId;
+	private int rating;
+	private String description;
+	private LocalDateTime reviewDate;
 	
 	
 }

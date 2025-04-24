@@ -12,20 +12,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cropdeal.exception.noProductFoundException;
-import com.cropdeal.models.cart;
-import com.cropdeal.models.product;
+import com.cropdeal.models.cartDto;
+import com.cropdeal.models.productdto;
 
 @FeignClient(name = "CROPDEAL-INVENTRY-SERVICE")
 public interface inventryServiceProxy {
 	
 	@GetMapping("/inventry/getProductById/{id}")
-	public product getProductById(@PathVariable String id) throws noProductFoundException;
+	public productdto getProductById(@PathVariable String id) throws noProductFoundException;
 	
 	@PostMapping("/inventry/orderplaced")
 	public String orderPlaced(@RequestBody Map<String, String> orderdetails ) throws noProductFoundException;
 	
 	@GetMapping("/inventry/getCartItemsByMarchentprox")
-	public List<cart> getCartItemsByMarchentprox(@RequestParam("merchentId") int merchentId) throws noProductFoundException;
+	public List<cartDto> getCartItemsByMarchentprox(@RequestParam("merchentId") int merchentId) throws noProductFoundException;
 	
 	@PostMapping("/inventry/cartOrderplaced")
 	public String cartOrderplaced(@RequestBody Map<String, String> orderdetails ) throws noProductFoundException ;

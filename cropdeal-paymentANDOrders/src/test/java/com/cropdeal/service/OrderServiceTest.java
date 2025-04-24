@@ -55,7 +55,7 @@ public class OrderServiceTest {
     @Test
     public void testPlaceOrder() throws noProductFoundException, invalidQuantityException, RazorpayException {
         // Mock product
-    	product product = new product();
+    	productdto product = new productdto();
         product.setProductId("1");
         product.setAvailableQuantity(10);
         product.setPrice(100);
@@ -91,7 +91,7 @@ public class OrderServiceTest {
 
     @Test
     public void testPlaceOrder_InvalidQuantity() throws noProductFoundException, invalidQuantityException, RazorpayException {
-    	product product = new product();
+    	productdto product = new productdto();
         product.setProductId("1");
         product.setAvailableQuantity(10);
         product.setPrice(100);

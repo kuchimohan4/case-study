@@ -26,19 +26,20 @@ public class paymentServiceimpl implements paymentService {
 		jsObject.put("currency", CURRENCY);
 		RazorpayClient razorpayClient=new RazorpayClient(SECRET_ID,SECRET_KEY);
 		
-		Order order=razorpayClient.orders.create(jsObject);
+//		Order order=razorpayClient.orders.create(jsObject);
 		
 		
-		return genrateTransactionDetails(order);
+		return genrateTransactionDetails(null,amount);
 	}
 	
 	
-	public transactionDetails genrateTransactionDetails(Order order) {
-		String orderid=order.get("id");
-		String currency=order.get("currency");
-		String amount=order.get("amount").toString();
-		return new transactionDetails(orderid,currency,amount,SECRET_KEY);
+	public transactionDetails genrateTransactionDetails(Order order,double amount) {
+//		String orderid=order.get("id");
+//		String currency=order.get("currency");
+//		String amount=order.get("amount").toString();
+//		return new transactionDetails(orderid,currency,amount,SECRET_KEY);
+		return new transactionDetails("orderid","INR",amount+"",SECRET_KEY);
 	}
-	
+
 
 }
