@@ -30,16 +30,16 @@ public class apigatewayConfiguration {
 				.route(p -> p.path("/adminControl/**")
 						.uri("lb://SECURITY-SERVICE"))
 				.route(p -> p.path("/profile/**")
-						.uri("lb://PROFILE-MANAGEMENT-SERVICE"))
+						.uri("lb://CROPDEAL-PAYMENTORDER-SERVICE"))
 				.route(p -> p.path("/inventry/**")
 //						.filters(f -> f.rewritePath(
 //								"/currency-conversion-new/(?<segment>.*)",
 //								"/currency-conversion-feign/${segment}"))
-						.uri("lb://CROPDEAL-INVENTRY-SERVICE"))
+						.uri("lb://CROPDEAL-PAYMENTORDER-SERVICE"))
 				.route(p -> p.path("/review/**")
-						.uri("lb://CROPDEAL-INVENTRY-SERVICE"))
+						.uri("lb://CROPDEAL-PAYMENTORDER-SERVICE"))
 				.route(p -> p.path("/shop/**")
-						.uri("lb://CROPDEAL-INVENTRY-SERVICE"))
+						.uri("lb://CROPDEAL-PAYMENTORDER-SERVICE"))
 				.route(p -> p.path("/order/**")
 						.uri("lb://CROPDEAL-PAYMENTORDER-SERVICE"))
 				.build();
